@@ -7,7 +7,7 @@
 <meta name="description" content="Sameer Athili - I turn ambiguous problems into things people can act on. Electrical Engineering (Co-op) at the University of Waterloo, CAPM certified.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#1a1d24;
@@ -108,6 +108,7 @@
   .proj p{font-size:15.5px;color:var(--ink);max-width:74ch;margin-bottom:12px;line-height:1.6}
   .proj .took{font-size:15px;color:var(--slate);max-width:74ch}
   .proj .took b{color:var(--ink);font-weight:600}
+  .proj .took + p.muted{margin-top:14px;margin-bottom:0}
   .proj .plinks{display:flex;gap:20px;margin-top:16px}
   .proj .plinks a{font-size:13.5px;color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px;transition:border-color .18s;font-weight:500}
   .proj .plinks a:hover{border-color:var(--accent)}
@@ -183,11 +184,11 @@
     <div class="about-body">
       <p>I started in Computer Engineering, switched to Electrical after second year, and across five co-op terms found the part I kept gravitating toward wasn't the hardware. It was the thinking around it: why a decision stalls, why the same problem keeps reappearing, why a team of ten can't say where something actually stands.</p>
       <p class="muted">That's taken me through strategy and transformation consulting, data analytics, and project delivery, in insurance, shipbuilding, a Crown corporation, and an early-stage AI company. SQL and Python on messy operational data, requirements and process work, dashboards leadership actually used, and the reporting and coordination that keeps complex work moving. The common thread is translating between the people who have the problem, the people building the fix, and the leaders who have to decide.</p>
-      <p class="muted">Lately I've been going deeper on AI governance, which is the same question one layer down: when the thing inside a workflow is a model rather than a rule, what is it deciding, who owns it, and how do we know it still works. I'm working through the NIST AI Risk Management Framework, ISO/IEC 42001, and OSFI's E-23 guidance on model risk.</p>
+      <p class="muted">Lately I've been going deeper on AI governance, which is the same question one layer down: when the thing inside a workflow is a model rather than a rule, what is it deciding, who owns it, and how do we know it still works. I've worked through the NIST AI Risk Management Framework, ISO/IEC 42001, and OSFI's E-23 guidance on model risk, and rather than stop at reading them I applied the NIST framework to a tool I'd built myself, <a href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">assessment here</a>. Auditing your own work is uncomfortable in a useful way.</p>
     </div>
     <div class="about-photo">
       <div class="facts">
-        <div class="fact"><b>University of Waterloo</b><span>BASc, Electrical &amp; Computer Engineering (Honours, Co-op). 2021&ndash;2026.</span></div>
+        <div class="fact"><b>University of Waterloo</b><span>BASc, Electrical Engineering (Honours, Co-op). 2021&ndash;2026.</span></div>
         <div class="fact"><b>CAPM</b><span>PMI Certified Associate in Project Management. 2026.</span></div>
         <div class="fact"><b>Five co-op terms</b><span>Consulting, data analytics, and delivery across four organizations.</span></div>
       </div>
@@ -205,7 +206,16 @@
       <h3>SyncBase</h3>
       <p>A tool that reads across a project's documents and flags where teams are working from different assumptions, the kind of quiet mismatch that turns into rework three weeks later. I built it to test my own thinking about where GenAI genuinely fits in real work.</p>
       <div class="took"><b>What it taught me:</b> the model was the easy part. The hard part was deciding which of fifty flags were the three that mattered. Precision over recall, because a tool that flags everything gets ignored on day two. The real skill wasn't the AI, it was the judgment about what's worth surfacing.</div>
-      <div class="plinks"><a href="https://syncbase-eight.vercel.app" target="_blank" rel="noopener">Live site</a><a href="https://github.com/sameerbxba/syncbase" target="_blank" rel="noopener">Code on GitHub</a></div>
+      <p class="muted">I also wrote the governance documentation for it, against the NIST AI Risk Management Framework. Writing it is what caught a control I had documented as implemented and hadn't actually built.</p>
+      <div class="plinks"><a href="https://syncbase-eight.vercel.app" target="_blank" rel="noopener">Live site</a><a href="https://github.com/sameerbxba/syncbase" target="_blank" rel="noopener">Code on GitHub</a><a href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">Read the AI risk assessment</a></div>
+    </div>
+
+    <div class="proj">
+      <div class="tags"><span class="tag">AI Governance</span><span class="tag">NIST AI RMF</span><span class="tag">2026</span></div>
+      <h3>Governing my own AI tool</h3>
+      <p>A NIST AI Risk Management Framework assessment of SyncBase, written the way I'd want one written about a system I had to sign off on. It separates the one genuinely AI feature from the rule-based one, because governing string concatenation as if it were a model is how these documents lose credibility. Eight risks with likelihood, impact and named treatments, a model card, a monitoring plan, and the numeric thresholds at which I'd switch the scanner off.</p>
+      <div class="took"><b>The section I'd point to:</b> the governance decision on precision over recall. The scanner deliberately surfaces fewer conflicts than it could, and the document states what that choice costs, not just what it buys. Verifying it against my own source code turned up a control I'd marked as implemented that didn't exist. The correction and the fix are both in the change log, because a governance document that was never wrong usually means nobody checked.</div>
+      <div class="plinks"><a href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">Read the assessment</a></div>
     </div>
 
     <div class="proj">
@@ -334,6 +344,7 @@
         <li>Stakeholder synthesis &amp; translation</li>
         <li>Evidence-based recommendations</li>
         <li>AI governance frameworks (NIST, ISO 42001, OSFI E-23)</li>
+        <li>Model cards, AI risk registers, intended-use statements</li>
         <li>Documentation, training, adoption</li>
         <li>Building with GenAI, judgment-first</li>
       </ul>

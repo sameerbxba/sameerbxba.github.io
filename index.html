@@ -182,8 +182,8 @@
   <div class="about-grid">
     <div class="about-body">
       <p>I started in Computer Engineering, switched to Electrical after second year, and across five co-op terms found the part I kept gravitating toward wasn't the hardware. It was the thinking around it: why a decision stalls, why the same problem keeps reappearing, why a team of ten can't say where something actually stands.</p>
-      <p class="muted">That's taken me through strategy and transformation consulting, data analytics, and project delivery at Equitable Life of Canada, Seaspan, Ontario Lottery and Gaming, and Vectonium, spanning insurance, shipbuilding, a Crown corporation, and an early-stage AI company. SQL and Python on messy operational data, requirements and process work, dashboards leadership actually used, and the reporting and coordination that keeps complex work moving. The common thread is translating between the people who have the problem, the people building the fix, and the leaders who have to decide.</p>
-      <p class="muted">Lately I've been going deeper on AI governance, which is the same question one layer down: when the thing inside a workflow is a model rather than a rule, what is it deciding, who owns it, and how do we know it still works. I'm working through the NIST AI Risk Management Framework, ISO/IEC 42001, and OSFI's E-23 guidance on model risk.</p>
+      <p class="muted">That's taken me through strategy and transformation consulting, data analytics, and project delivery at <strong>Equitable Life of Canada, Seaspan, Vectonium, and Ontario Lottery and Gaming</strong>, spanning insurance, shipbuilding, a Crown corporation, and an early-stage AI company. SQL and Python on messy operational data, requirements and process work, dashboards leadership actually used, and the reporting and coordination that keeps complex work moving. The common thread is translating between the people who have the problem, the people building the fix, and the leaders who have to decide.</p>
+      <p class="muted">Lately I've been going deeper on <strong>AI governance</strong>, which is the same question one layer down: when the thing inside a workflow is a model rather than a rule, what is it deciding, who owns it, and how do we know it still works. I'm working through the <strong>NIST AI Risk Management Framework</strong>, <strong>ISO/IEC 42001</strong>, and <strong>OSFI's E-23</strong> guidance on model risk.</p>
     </div>
     <div class="about-photo">
       <div class="facts">
@@ -204,8 +204,16 @@
       <div class="tags"><span class="tag">Generative AI</span><span class="tag">Personal build</span><span class="tag">2026</span></div>
       <h3>SyncBase</h3>
       <p>A tool that reads across a project's documents and flags where teams are working from different assumptions, the kind of quiet mismatch that turns into rework three weeks later. I built it to test my own thinking about where GenAI genuinely fits in real work.</p>
-      <div class="took"><b>What it taught me:</b> the model was the easy part. The hard part was deciding which of fifty flags were the three that mattered. Precision over recall, because a tool that flags everything gets ignored on day two. The real skill wasn't the AI, it was the judgment about what's worth surfacing.</div>
+      <div class="took"><b>What it taught me:</b> the model was the easy part. The hard part was deciding which of a long list of flags were the three that mattered. Precision over recall, because a tool that flags everything gets ignored on day two. The real skill wasn't the AI, it was the judgment about what's worth surfacing.</div>
       <div class="plinks"><a href="https://syncbase-eight.vercel.app" target="_blank" rel="noopener">Live site</a><a href="https://github.com/sameerbxba/syncbase" target="_blank" rel="noopener">Code on GitHub</a></div>
+    </div>
+
+    <div class="proj">
+      <div class="tags"><span class="tag">AI Governance</span><span class="tag">NIST AI RMF</span><span class="tag">2026</span></div>
+      <h3>A risk assessment on my own tool</h3>
+      <p>I wrote a full NIST AI RMF risk assessment against SyncBase: intended use and what it is explicitly not for, risk tolerances, a model card, monitoring thresholds, and the criteria that would make me shut it down. I did it because I'd made judgment calls while building that I could only defend by talking, and I wanted them written down so someone else could check them.</p>
+      <div class="took"><b>What it taught me:</b> writing a control down and having one are two different things. After I finished, I went back through the source code to check whether my own document was true, and found a control I'd marked as implemented that hadn't been built. I logged the correction as a version change rather than quietly fixing it.</div>
+      <div class="plinks"><a href="assets/syncbase-nist-assessment.pdf" target="_blank" rel="noopener">Read the assessment (PDF)</a></div>
     </div>
 
     <div class="proj">

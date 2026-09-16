@@ -27,10 +27,11 @@ body{
 a{color:inherit}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
 
-#progress{position:fixed;top:0;left:0;height:2px;width:0%;
-  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;transition:width .08s linear}
+#progress{position:fixed;top:0;left:0;height:2px;width:100%;
+  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;
+  transform:scaleX(0);transform-origin:0 50%;will-change:transform}
 nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);
-  backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid transparent;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
 nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
 .navrow{max-width:1080px;margin:0 auto;padding:12px 28px;
@@ -266,17 +267,21 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
 <script>
 (function(){
-  var nav=document.getElementById('nav'),bar=document.getElementById('progress'),ticking=false;
+  var nav=document.getElementById('nav'),bar=document.getElementById('progress');
+  var limit=0,ticking=false;
+  function measure(){limit=document.documentElement.scrollHeight-window.innerHeight}
   function frame(){
     ticking=false;
-    var y=window.scrollY||document.documentElement.scrollTop;
-    var h=document.documentElement.scrollHeight-window.innerHeight;
-    bar.style.width=(h>0?(y/h)*100:0)+'%';
+    var y=window.scrollY||window.pageYOffset||0;
+    var p=limit>0?y/limit:0;
+    bar.style.transform='scaleX('+(p<0?0:p>1?1:p)+')';
     nav.classList.toggle('stuck',y>12);
   }
   function onScroll(){ if(ticking) return; ticking=true; window.requestAnimationFrame(frame); }
+  measure();frame();
   window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',onScroll);frame();
+  window.addEventListener('resize',function(){measure();frame()});
+  window.addEventListener('load',measure);
   var rv=document.querySelectorAll('.rv');
   if(!('IntersectionObserver' in window)){
     Array.prototype.forEach.call(rv,function(e){e.classList.add('in')});return;

@@ -39,15 +39,16 @@ img{max-width:100%;display:block}
 
 /* ============ progress + nav ============ */
 #progress{
-  position:fixed;top:0;left:0;height:2px;width:0%;
+  position:fixed;top:0;left:0;height:2px;width:100%;
   background:linear-gradient(90deg,var(--navy),var(--accent));
-  z-index:60;transition:width .08s linear;
+  z-index:60;transform:scaleX(0);transform-origin:0 50%;
+  will-change:transform;
 }
 nav{
   position:sticky;top:0;z-index:50;
   background:rgba(250,248,244,.82);
-  backdrop-filter:saturate(180%) blur(12px);
-  -webkit-backdrop-filter:saturate(180%) blur(12px);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid transparent;
   transition:border-color .3s var(--ease),box-shadow .3s var(--ease);
 }
@@ -306,6 +307,7 @@ footer{
 <body>
 
 <div id="progress"></div>
+<div id="top-sentinel" aria-hidden="true" style="position:absolute;top:0;height:14px;width:1px"></div>
 
 <nav id="nav">
   <div class="navrow">
@@ -724,24 +726,25 @@ footer{
   var sections = links
     .map(function (a) { return document.querySelector(a.getAttribute('href')); })
     .filter(Boolean);
-  var ticking = false;
+  var hasIO = 'IntersectionObserver' in window;
 
-  // Reading layout on every scroll event is what makes a page feel sticky.
-  // One read per animation frame instead.
+  // --- progress bar -------------------------------------------------
+  // Nothing here reads layout during a scroll. scrollHeight is measured
+  // once and on resize, and the bar animates transform rather than width,
+  // so the browser can run it on the compositor instead of re-laying out
+  // the page on every frame. Forced layout on scroll is what makes a page
+  // feel heavy, and it is the one thing worth designing out.
+  var limit = 0, ticking = false;
+
+  function measure() {
+    limit = document.documentElement.scrollHeight - window.innerHeight;
+  }
+
   function frame() {
     ticking = false;
-    var y = window.scrollY || document.documentElement.scrollTop;
-    var h = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
-    nav.classList.toggle('stuck', y > 12);
-
-    var current = null;
-    for (var i = 0; i < sections.length; i++) {
-      if (sections[i].getBoundingClientRect().top <= 160) { current = sections[i]; }
-    }
-    links.forEach(function (a) {
-      a.classList.toggle('active', !!current && a.getAttribute('href') === '#' + current.id);
-    });
+    var y = window.scrollY || window.pageYOffset || 0;
+    var p = limit > 0 ? y / limit : 0;
+    bar.style.transform = 'scaleX(' + (p < 0 ? 0 : p > 1 ? 1 : p) + ')';
   }
 
   function onScroll() {
@@ -750,15 +753,50 @@ footer{
     window.requestAnimationFrame(frame);
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
+  measure();
   frame();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { measure(); frame(); });
+  window.addEventListener('load', measure);
 
-  var reveal = document.querySelectorAll('.rv');
-  if (!('IntersectionObserver' in window)) {
-    Array.prototype.forEach.call(reveal, function (el) { el.classList.add('in'); });
+  if (!hasIO) {
+    Array.prototype.forEach.call(document.querySelectorAll('.rv'), function (el) {
+      el.classList.add('in');
+    });
     return;
   }
+
+  // --- stuck nav ----------------------------------------------------
+  // A one-pixel sentinel at the top of the document, watched rather than
+  // measured.
+  var sentinel = document.getElementById('top-sentinel');
+  if (sentinel) {
+    new IntersectionObserver(function (entries) {
+      nav.classList.toggle('stuck', !entries[0].isIntersecting);
+    }, { threshold: 0 }).observe(sentinel);
+  }
+
+  // --- which section am I in ---------------------------------------
+  // Previously this measured all five sections on every frame. The
+  // observer reports the same thing and costs nothing while scrolling.
+  var visible = {};
+  function setActive() {
+    var current = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (visible[sections[i].id]) { current = sections[i]; }
+    }
+    links.forEach(function (a) {
+      a.classList.toggle('active', !!current && a.getAttribute('href') === '#' + current.id);
+    });
+  }
+  var navIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting; });
+    setActive();
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+  sections.forEach(function (sec) { navIO.observe(sec); });
+
+  // --- reveal -------------------------------------------------------
+  var reveal = document.querySelectorAll('.rv');
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
@@ -769,8 +807,6 @@ footer{
       var idx = Math.max(0, siblings.indexOf(el));
       el.style.transitionDelay = Math.min(idx * 55, 190) + 'ms';
       el.classList.add('in');
-      // Drop the compositor hint once the animation is over, so long pages
-      // are not holding a layer for every element on them.
       window.setTimeout(function () { el.classList.add('settled'); }, 1100);
       io.unobserve(el);
     });

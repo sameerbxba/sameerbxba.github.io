@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sameer Athili — Technology Risk &amp; AI Governance</title>
-<meta name="description" content="Sameer Athili. Technology risk and AI governance. Selected work, experience, and the risk assessments behind the systems I build.">
+<title>Sameer Athili — Analytics, Delivery &amp; Technology Risk</title>
+<meta name="description" content="Sameer Athili. Reporting and analysis, project delivery, and technology risk. Selected work, experience, and the risk assessments behind the systems I build.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -304,7 +304,7 @@ footer span{color:var(--mute)}
 
 <div class="docbar" id="top">
   <div class="wrap mono">
-    <span>Technology Risk &amp; AI Governance</span>
+    <span>Analytics &nbsp;·&nbsp; Delivery &nbsp;·&nbsp; Technology Risk</span>
     <span>Toronto / GTA &nbsp;·&nbsp; Updated September 2026</span>
   </div>
 </div>
@@ -313,15 +313,17 @@ footer span{color:var(--mute)}
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="role key rv">Risk assessments &nbsp;/&nbsp; Control design &nbsp;/&nbsp; Delivery</div>
+      <div class="role key rv">Reporting &amp; analysis &nbsp;/&nbsp; Project delivery &nbsp;/&nbsp; Risk &amp; governance</div>
       <h1 class="rv">I turn ambiguous problems into things people can act on.</h1>
       <p class="lede rv">
         I work at the point where a technical decision has to become something a
         business can actually act on, which usually means finding the real problem,
         testing it against evidence, and turning it into a recommendation somebody
-        can own. Most recently that has meant <strong>AI governance</strong>: writing
-        the risk assessments, building the controls into the systems themselves, and
-        then checking whether those controls actually hold.
+        can own. In practice that has been <strong>reporting and analysis</strong> that
+        people act on, <strong>delivery</strong> across teams that cannot see past their
+        own step, and most recently <strong>AI governance</strong>: writing the risk
+        assessments, building the controls into the systems themselves, and then
+        checking whether those controls actually hold.
       </p>
       <div class="herolinks rv">
         <a class="tlink" href="#work">Selected work <span class="ar">&rarr;</span></a>
@@ -410,9 +412,29 @@ footer span{color:var(--mute)}
         </div>
       </div>
     </div>
-
     <div class="entry rv">
       <div class="idx mono">1.2</div>
+      <div>
+        <h3>Reconciliation, from two hours to ten minutes</h3>
+        <p class="summary">Automating the checks meant the reporting stopped depending on who happened to run it that week.</p>
+        <div class="meta key">Data &nbsp;/&nbsp; SQL &amp; Python &nbsp;/&nbsp; Ontario Lottery and Gaming</div>
+        <p>
+          I used SQL and Python to match financial, transaction and vendor records across
+          systems, surfacing discrepancies and missing approvals that nobody had the time
+          to catch by hand. I then automated four recurring reconciliation and reporting
+          workflows around those checks.
+        </p>
+        <div class="note">
+          <p><b>The result:</b> the clearest of the four took about two hours manually and
+          ran in roughly ten minutes afterwards, and the reporting became more consistent
+          because the process stopped depending on who happened to run it. I also built
+          the Tableau and Power BI views leadership used weekly, designed around the
+          decision each audience actually had to make.</p>
+        </div>
+      </div>
+    </div>
+    <div class="entry rv">
+      <div class="idx mono">1.3</div>
       <div>
         <h3>SyncBase</h3>
         <p class="summary">The model turned out to be the easy part, and deciding which flags were worth surfacing was the whole problem.</p>
@@ -436,9 +458,33 @@ footer span{color:var(--mute)}
         </div>
       </div>
     </div>
-
     <div class="entry rv">
-      <div class="idx mono">1.3</div>
+      <div class="idx mono">1.4</div>
+      <div>
+        <h3>Approval workflow redesign</h3>
+        <p class="summary">Why I recommended against automating the part of the process I had specifically been asked to automate.</p>
+        <div class="meta key">Process &nbsp;/&nbsp; ServiceNow &nbsp;/&nbsp; Equitable Life of Canada</div>
+        <p>
+          Approvals were slow, and the conversation in the room was about how much of the
+          process to automate. Two weeks of shadowing showed that a meaningful share of
+          them involved judgment calls the users did not want automated away, so I
+          categorised approvals into rule-based and judgment-required, put rough volumes
+          against each, and proposed the split: routing rules for the first group, a
+          structured review queue for the second.
+        </p>
+        <div class="note">
+          <p><b>Why it worked:</b> users adopted it without resistance, because they kept
+          oversight exactly where it mattered to them. The lesson that stuck is that the
+          analysis was the easy part, and getting the human judgment call right was the
+          whole game.</p>
+        </div>
+        <div class="elinks">
+          <a class="tlink" href="case-approval-workflow.html">Read the case study <span class="ar">&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="entry rv">
+      <div class="idx mono">1.5</div>
       <div>
         <h3>Governing my own AI tool</h3>
         <p class="summary">What it is like to assess your own tool properly, and to find a control you had documented as implemented but never actually built.</p>
@@ -465,55 +511,6 @@ footer span{color:var(--mute)}
         </div>
       </div>
     </div>
-
-    <div class="entry rv">
-      <div class="idx mono">1.4</div>
-      <div>
-        <h3>Reconciliation, from two hours to ten minutes</h3>
-        <p class="summary">Automating the checks meant the reporting stopped depending on who happened to run it that week.</p>
-        <div class="meta key">Data &nbsp;/&nbsp; SQL &amp; Python &nbsp;/&nbsp; Ontario Lottery and Gaming</div>
-        <p>
-          I used SQL and Python to match financial, transaction and vendor records across
-          systems, surfacing discrepancies and missing approvals that nobody had the time
-          to catch by hand. I then automated four recurring reconciliation and reporting
-          workflows around those checks.
-        </p>
-        <div class="note">
-          <p><b>The result:</b> the clearest of the four took about two hours manually and
-          ran in roughly ten minutes afterwards, and the reporting became more consistent
-          because the process stopped depending on who happened to run it. I also built
-          the Tableau and Power BI views leadership used weekly, designed around the
-          decision each audience actually had to make.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="entry rv">
-      <div class="idx mono">1.5</div>
-      <div>
-        <h3>Approval workflow redesign</h3>
-        <p class="summary">Why I recommended against automating the part of the process I had specifically been asked to automate.</p>
-        <div class="meta key">Process &nbsp;/&nbsp; ServiceNow &nbsp;/&nbsp; Equitable Life of Canada</div>
-        <p>
-          Approvals were slow, and the conversation in the room was about how much of the
-          process to automate. Two weeks of shadowing showed that a meaningful share of
-          them involved judgment calls the users did not want automated away, so I
-          categorised approvals into rule-based and judgment-required, put rough volumes
-          against each, and proposed the split: routing rules for the first group, a
-          structured review queue for the second.
-        </p>
-        <div class="note">
-          <p><b>Why it worked:</b> users adopted it without resistance, because they kept
-          oversight exactly where it mattered to them. The lesson that stuck is that the
-          analysis was the easy part, and getting the human judgment call right was the
-          whole game.</p>
-        </div>
-        <div class="elinks">
-          <a class="tlink" href="case-approval-workflow.html">Read the case study <span class="ar">&rarr;</span></a>
-        </div>
-      </div>
-    </div>
-
     <div class="entry rv">
       <div class="idx mono">1.6</div>
       <div>
@@ -534,7 +531,6 @@ footer span{color:var(--mute)}
         </div>
       </div>
     </div>
-
   </div>
 </section>
 

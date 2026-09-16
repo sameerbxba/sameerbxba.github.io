@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study: an approval workflow that did not need automating — Sameer Athili</title>
+<meta name="description" content="At Equitable Life the brief was how much of the approval process to automate. Two weeks of shadowing showed that was the wrong question.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15181f;--slate:#586274;--mute:#7b8595;
+  --navy:#1F4E79;--navy-deep:#102a43;--navy-soft:#2f6094;
+  --paper:#faf8f4;--paper-2:#f3f0e9;--line:#e4dfd5;
+  --accent:#c2703d;--accent-soft:#e6a578;
+  --maxw:780px;--ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  color:var(--ink);background:var(--paper);
+  line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:0%;
+  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;transition:width .08s linear}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);
+  backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid transparent;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
+.navrow{max-width:1080px;margin:0 auto;padding:12px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px}
+.back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-size:13.6px;font-weight:600;color:var(--slate);
+  padding:7px 12px;border-radius:8px;transition:all .25s var(--ease)}
+.back:hover{color:var(--navy);background:var(--paper-2)}
+.back .ar{transition:transform .25s var(--ease)}
+.back:hover .ar{transform:translateX(-3px)}
+.navtag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);white-space:nowrap}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}}
+
+header.head{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);margin-bottom:15px}
+h1{font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.025em;
+  color:var(--navy-deep);margin-bottom:18px}
+.standfirst{font-size:18px;color:var(--slate);line-height:1.65;max-width:62ch}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px;
+  padding-top:24px;border-top:1px solid var(--line)}
+.meta div b{display:block;font-size:10.8px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mute);font-weight:700;margin-bottom:5px}
+.meta div span{font-size:14.2px;color:var(--ink);font-weight:500}
+@media(max-width:700px){.meta{grid-template-columns:repeat(2,1fr);gap:16px}}
+
+section.s{padding:46px 0;border-bottom:1px solid var(--line)}
+section.s:last-of-type{border-bottom:none}
+.snum{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:9px}
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(23px,3.2vw,30px);
+  line-height:1.16;letter-spacing:-.02em;color:var(--navy-deep);margin-bottom:18px}
+h3{font-size:16.5px;font-weight:600;color:var(--navy-deep);margin:26px 0 9px}
+p{margin-bottom:16px;font-size:16.4px;color:var(--slate)}
+p strong{color:var(--ink);font-weight:600}
+ul{list-style:none;margin:0 0 18px}
+li{position:relative;padding:6px 0 6px 22px;color:var(--slate);font-size:16.2px}
+li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;
+  border-radius:50%;border:1.7px solid var(--accent-soft)}
+li strong{color:var(--ink);font-weight:600}
+
+.callout{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:22px 24px;margin:24px 0}
+.callout b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:9px;font-weight:700}
+.callout p:last-child{margin-bottom:0}
+.dark-note{background:var(--navy-deep);color:#dde6ef;border-radius:13px;padding:26px 28px;margin:26px 0}
+.dark-note b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-soft);margin-bottom:10px;font-weight:700}
+.dark-note p{color:#c2cfdc;margin-bottom:14px}
+.dark-note p:last-child{margin-bottom:0}
+.dark-note strong{color:#fff}
+pre{background:var(--navy-deep);color:#d7e2ee;border-radius:11px;padding:18px 20px;
+  overflow-x:auto;margin:20px 0;font-size:13px;line-height:1.72;
+  font-family:'SF Mono',Menlo,Consolas,monospace}
+pre .blk{color:#e6a578}
+figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:italic}
+
+.foot{padding:52px 0 64px;text-align:center;background:var(--paper-2);border-top:1px solid var(--line)}
+.foot p{max-width:56ch;margin:0 auto 22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 21px;border-radius:9px;
+  text-decoration:none;font-size:14.5px;font-weight:600;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 5px 18px rgba(31,78,121,.24)}
+.btn-primary:hover{background:var(--navy-soft);transform:translateY(-2px)}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px)}
+.btnrow{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav id="nav">
+  <div class="navrow">
+    <a class="back" href="index.html#work"><span class="ar">&larr;</span> All work</a>
+    <span class="navtag">Case study</span>
+  </div>
+</nav>
+
+<header class="head">
+  <div class="wrap">
+    <div class="eyebrow rv">Case study &nbsp;·&nbsp; Process &amp; delivery</div>
+    <h1 class="rv">The approval workflow that did not need automating</h1>
+    <p class="standfirst rv">The brief was how much of the approval process to automate. The answer turned out to be less than anybody expected, and the delay was not where the question assumed it was.</p>
+    <div class="meta rv">
+      <div><b>Context</b><span>Equitable Life of Canada</span></div>
+      <div><b>My role</b><span>Strategy &amp; digital transformation co-op</span></div>
+      <div><b>When</b><span>Sep &ndash; Dec 2025</span></div>
+      <div><b>Built with</b><span>ServiceNow, Power BI, process mapping</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<section class="s rv">
+  <span class="snum">01 &nbsp;/&nbsp; The situation</span>
+  <h2>A brief that arrived with the answer already in it</h2>
+
+<p>
+  Approvals were slow, and the question in the room when I arrived was how much of
+  the approval process to automate. That framing was the brief, and the deliverable
+  implied by it was a plan for how much could be taken out of human hands.
+</p>
+<p>
+  It is a reasonable-sounding question. It is also a question that already contains
+  its own answer, which is the kind I have learned to be careful with.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">02 &nbsp;/&nbsp; What I actually did</span>
+  <h2>Two weeks of watching before proposing anything</h2>
+
+<p>
+  Rather than start from the automation question, I spent the first stretch of the
+  project shadowing the people doing the approvals and reading what actually moved
+  through the process.
+</p>
+<p>Three things came out of that:</p>
+<ul>
+  <li><strong>A meaningful share of approvals involved judgment</strong> that the approvers did not want automated away. These were not slow because of process friction. They were slow because somebody was thinking.</li>
+  <li><strong>The delay was concentrated at a handoff that nobody owned</strong>, rather than being spread across approvers. Work would sit between two teams because it was not anybody's to pick up.</li>
+  <li><strong>The two groups of approvals behaved completely differently</strong> and were being measured as one number, which is why the problem had looked like general slowness.</li>
+</ul>
+<p>
+  So I categorised approvals into rule-based and judgment-required, put rough volumes
+  against each, and proposed a split rather than a percentage: routing rules for the
+  first group, and a structured review queue for the second. I built the business
+  case around the handoff rather than around approver speed, and built the Power BI
+  reporting that turned a stuck sign-off from an administrative item into a visible
+  schedule risk.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">03 &nbsp;/&nbsp; The decision that mattered</span>
+  <h2>Not automating the part I had been asked to automate</h2>
+
+<p>
+  The judgment-required approvals were the ones with the most apparent time in them,
+  and therefore the most attractive to automate. I recommended leaving them with
+  people, and putting the effort into making the queue structured and visible instead.
+</p>
+<div class="callout">
+  <b class="lab">The reasoning</b>
+  <p>
+    Automating a judgment call does not remove the judgment. It relocates it to
+    somebody who has less context, or it gets routed around by people who know the
+    decision matters and quietly go back to the old path. Either way the control
+    looks like it is operating and is not.
+  </p>
+</div>
+<p>
+  The measurable outcome was a reduction in handoff delays of roughly a quarter. The
+  outcome I would actually point to is that the change was adopted without
+  resistance, because the people doing the work kept oversight exactly where it
+  mattered to them.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">04 &nbsp;/&nbsp; What I got wrong</span>
+  <h2>I worked inside the brief before I questioned it</h2>
+
+<p>
+  For the first part of the project I took the framing at face value and worked on
+  the question I had been handed, which was how much to automate. The useful work
+  only started once I stopped answering that question and went to watch what was
+  actually happening.
+</p>
+<p>
+  Two weeks is not a disaster on a four-month term, and discovery was what corrected
+  it. But the correction came from a habit rather than from a decision, and I would
+  rather it had been deliberate. The specific mistake was treating the stated problem
+  as the problem, when the stated problem was a proposed solution wearing a question
+  mark.
+</p>
+<div class="dark-note">
+  <b class="lab">What I do differently now</b>
+  <p>
+    I try to separate, out loud and early, <strong>the problem somebody is
+    experiencing</strong> from <strong>the solution already implied in how they
+    described it</strong>. "Approvals are slow" and "how much should we automate" are
+    not the same brief, and only one of them is a problem statement.
+  </p>
+  <p>
+    Asking that at the start costs one awkward conversation. Not asking it costs two
+    weeks, and sometimes costs the whole project.
+  </p>
+</div>
+
+</section>
+<section class="s rv">
+  <span class="snum">05 &nbsp;/&nbsp; What I would do differently</span>
+  <h2>Mostly about evidence</h2>
+
+<ul>
+  <li><strong>Baseline properly before changing anything.</strong> The quarter reduction is a real improvement, but the measurement around it was lighter than I would want if somebody asked me to defend the number rather than report it.</li>
+  <li><strong>Get the handoff formally owned.</strong> The delay sat at a point that belonged to nobody, and the fix relied on visibility rather than on a named owner. Visibility works until attention moves elsewhere.</li>
+  <li><strong>Write down the judgment criteria.</strong> The split between rule-based and judgment-required was sound, but it lived in the analysis rather than in a document the team would maintain. Categories like that decay quietly.</li>
+</ul>
+<p>
+  The thread from here to the AI governance work is more direct than it looks. The
+  question in both is the same: when part of a process stops being a person and
+  becomes a rule or a model, what is actually deciding, who owns it, and how would
+  anyone know if it stopped working.
+</p>
+
+</section>
+
+</main>
+
+<div class="foot">
+  <div class="wrap">
+    <p>This was one of six concurrent transformation workstreams. The same term included defining scope for a ServiceNow Integrated Risk Management implementation.</p>
+    <div class="btnrow">
+      <a class="btn btn-primary" href="index.html#work">All work</a>
+      <a class="btn btn-ghost" href="index.html#contact">Get in touch</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var nav=document.getElementById('nav'),bar=document.getElementById('progress');
+  function onScroll(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?(y/h)*100:0)+'%';
+    nav.classList.toggle('stuck',y>12);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);onScroll();
+  var rv=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(rv,function(e){e.classList.add('in')});return;
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{rootMargin:'0px 0px -6% 0px',threshold:0.06});
+  Array.prototype.forEach.call(rv,function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

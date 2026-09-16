@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study: a SOC 2 review agent that cannot act without permission — Sameer Athili</title>
+<meta name="description" content="How I built an AI agent that reviews SOC 2 reports, the controls I put around it, and the control that turned out to be recording decisions nobody made.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15181f;--slate:#586274;--mute:#7b8595;
+  --navy:#1F4E79;--navy-deep:#102a43;--navy-soft:#2f6094;
+  --paper:#faf8f4;--paper-2:#f3f0e9;--line:#e4dfd5;
+  --accent:#c2703d;--accent-soft:#e6a578;
+  --maxw:780px;--ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  color:var(--ink);background:var(--paper);
+  line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:0%;
+  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;transition:width .08s linear}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);
+  backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid transparent;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
+.navrow{max-width:1080px;margin:0 auto;padding:12px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px}
+.back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-size:13.6px;font-weight:600;color:var(--slate);
+  padding:7px 12px;border-radius:8px;transition:all .25s var(--ease)}
+.back:hover{color:var(--navy);background:var(--paper-2)}
+.back .ar{transition:transform .25s var(--ease)}
+.back:hover .ar{transform:translateX(-3px)}
+.navtag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);white-space:nowrap}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}}
+
+header.head{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);margin-bottom:15px}
+h1{font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.025em;
+  color:var(--navy-deep);margin-bottom:18px}
+.standfirst{font-size:18px;color:var(--slate);line-height:1.65;max-width:62ch}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px;
+  padding-top:24px;border-top:1px solid var(--line)}
+.meta div b{display:block;font-size:10.8px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mute);font-weight:700;margin-bottom:5px}
+.meta div span{font-size:14.2px;color:var(--ink);font-weight:500}
+@media(max-width:700px){.meta{grid-template-columns:repeat(2,1fr);gap:16px}}
+
+section.s{padding:46px 0;border-bottom:1px solid var(--line)}
+section.s:last-of-type{border-bottom:none}
+.snum{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:9px}
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(23px,3.2vw,30px);
+  line-height:1.16;letter-spacing:-.02em;color:var(--navy-deep);margin-bottom:18px}
+h3{font-size:16.5px;font-weight:600;color:var(--navy-deep);margin:26px 0 9px}
+p{margin-bottom:16px;font-size:16.4px;color:var(--slate)}
+p strong{color:var(--ink);font-weight:600}
+ul{list-style:none;margin:0 0 18px}
+li{position:relative;padding:6px 0 6px 22px;color:var(--slate);font-size:16.2px}
+li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;
+  border-radius:50%;border:1.7px solid var(--accent-soft)}
+li strong{color:var(--ink);font-weight:600}
+
+.callout{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:22px 24px;margin:24px 0}
+.callout b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:9px;font-weight:700}
+.callout p:last-child{margin-bottom:0}
+.dark-note{background:var(--navy-deep);color:#dde6ef;border-radius:13px;padding:26px 28px;margin:26px 0}
+.dark-note b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-soft);margin-bottom:10px;font-weight:700}
+.dark-note p{color:#c2cfdc;margin-bottom:14px}
+.dark-note p:last-child{margin-bottom:0}
+.dark-note strong{color:#fff}
+pre{background:var(--navy-deep);color:#d7e2ee;border-radius:11px;padding:18px 20px;
+  overflow-x:auto;margin:20px 0;font-size:13px;line-height:1.72;
+  font-family:'SF Mono',Menlo,Consolas,monospace}
+pre .blk{color:#e6a578}
+figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:italic}
+
+.foot{padding:52px 0 64px;text-align:center;background:var(--paper-2);border-top:1px solid var(--line)}
+.foot p{max-width:56ch;margin:0 auto 22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 21px;border-radius:9px;
+  text-decoration:none;font-size:14.5px;font-weight:600;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 5px 18px rgba(31,78,121,.24)}
+.btn-primary:hover{background:var(--navy-soft);transform:translateY(-2px)}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px)}
+.btnrow{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav id="nav">
+  <div class="navrow">
+    <a class="back" href="index.html#work"><span class="ar">&larr;</span> All work</a>
+    <span class="navtag">Case study</span>
+  </div>
+</nav>
+
+<header class="head">
+  <div class="wrap">
+    <div class="eyebrow rv">Case study &nbsp;·&nbsp; AI governance</div>
+    <h1 class="rv">An agent that reviews SOC 2 reports, and the control that lied about me</h1>
+    <p class="standfirst rv">I built an AI agent that can write to a register, then spent longer governing it than building it. The most useful thing I found was a control that was quietly manufacturing the evidence it existed to provide.</p>
+    <div class="meta rv">
+      <div><b>Context</b><span>Self-directed</span></div>
+      <div><b>My role</b><span>Design, build, assessment</span></div>
+      <div><b>When</b><span>2026</span></div>
+      <div><b>Built with</b><span>Python, Anthropic API, pytest</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<section class="s rv">
+  <span class="snum">01 &nbsp;/&nbsp; The situation</span>
+  <h2>Governing a system that can act, not just answer</h2>
+
+<p>
+  Everything I had written about AI governance to that point was about a model
+  that produces an answer. A model can be wrong, and being wrong produces a bad
+  sentence. I wanted to know what changes when the system can do something, and
+  the honest way to find out was to build one and then try to govern it.
+</p>
+<p>
+  So I picked a task from the world I want to work in. The agent reads a vendor's
+  SOC 2 report, assesses it against a receiving organisation's own control
+  requirements, and writes one finding per requirement into a gap register. It has
+  to hold the distinctions that make that work difficult: design versus operating
+  effectiveness, tested evidence versus management's assertion, out of scope versus
+  failed, and the vendor's control versus yours.
+</p>
+<p>
+  I deliberately chose a task where the system <strong>writes</strong>. A read-only
+  summariser would have been easier to build and far less interesting to govern.
+  The moment a system can change state, the governance question stops being accuracy
+  and becomes authority, and authority is the thing the existing frameworks have the
+  least to say about.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">02 &nbsp;/&nbsp; What I built</span>
+  <h2>A loop, six functions, and six controls in the gap between them</h2>
+
+<p>
+  The agent itself is about a hundred lines. The program opens a conversation with
+  the model and hands it a list of functions it may call. Instead of replying with
+  text, the model replies with a request to call one of them. The program runs it,
+  hands back the result, and asks again, until the model stops or a control stops it.
+</p>
+<p>
+  Four of the six functions read. One writes. One ends the run. Everything the system
+  can do to the world outside itself goes through that single write, which is what
+  made the authority question tractable at all.
+</p>
+<p>
+  The six controls all live in the same place, which is the gap between the model
+  asking and the program doing:
+</p>
+<ul>
+  <li><strong>A declared tool allowlist</strong>, because an agent's real capability is whatever its tools can reach, not whatever its prompt claims it does.</li>
+  <li><strong>Action tiers</strong>, so reads execute and writes stop and ask a person.</li>
+  <li><strong>A run budget</strong> on iterations, tokens and wall-clock time.</li>
+  <li><strong>An append-only audit log</strong> of every call, argument, control decision and approval, written before the result goes back to the model.</li>
+  <li><strong>A citation check</strong> that refuses a finding unless the quoted evidence appears verbatim in the source and the section was read in that run.</li>
+  <li><strong>Rollback</strong> of everything a run wrote, which deliberately does not touch the log.</li>
+</ul>
+
+</section>
+<section class="s rv">
+  <span class="snum">03 &nbsp;/&nbsp; The decision that mattered</span>
+  <h2>Approval per action, not per run</h2>
+
+<p>
+  The easy design is a single prompt at the start: approve this run, then let it go.
+  It is less annoying, it demos better, and it is what most tools do.
+</p>
+<p>
+  I made approval happen per write instead, so ten findings means ten prompts. The
+  reason is that the audit log is the whole point. A single up-front approval means
+  the log records a human decision about a run rather than about any particular
+  finding, and nobody actually decided anything about finding seven. Ten prompts is
+  the cost of the log being true.
+</p>
+<div class="callout">
+  <b class="lab">The principle</b>
+  <p>
+    A control that produces a record should only record decisions that were actually
+    made. If the record is more confident than the human was, the control has made
+    things worse rather than better, because everyone downstream trusts the record.
+  </p>
+</div>
+<p>
+  The second decision in the same spirit: rollback reverses what the agent wrote and
+  leaves the audit log alone. Undoing an action and erasing the evidence that it
+  happened are different operations, and only one of them should be available to the
+  person running the tool.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">04 &nbsp;/&nbsp; What I got wrong</span>
+  <h2>A control that manufactured the evidence it existed to provide</h2>
+
+<p>
+  The first version of the approval prompt treated any input that was not
+  <code>y</code> as a decline. That is the obvious way to write it and it looks
+  safe, because the default is refusal.
+</p>
+<p>
+  While the agent was sitting at a prompt waiting for an answer, I pasted my next
+  command into the terminal. The prompt consumed the whole line as my answer. It was
+  not <code>y</code>, so the system recorded <strong>declined by operator</strong> in
+  the audit log against requirement R-02, and moved on.
+</p>
+<div class="dark-note">
+  <b class="lab">Why this was worse than it looked</b>
+  <p>
+    The visible effect was a missing finding, which is trivial and self-correcting.
+    The real effect was that the audit log now asserted a human decision that no
+    human had made.
+  </p>
+  <p>
+    That control exists so the log can be relied on as evidence of oversight. A
+    failure mode where it silently <strong>manufactures</strong> that evidence is
+    worse than the control being absent, because an absent control is visible and a
+    false record is not.
+  </p>
+</div>
+<p>
+  I had reviewed that function and written a test for it. Neither the review nor the
+  test asked what the control does with input that is neither approval nor refusal,
+  because I was thinking about the two answers rather than about everything else a
+  terminal can receive. It was found by running the thing, not by reading it.
+</p>
+<p>The fix, now documented as control AC-2b:</p>
+<ul>
+  <li>Only an explicit <strong>y</strong> or <strong>n</strong> counts. Anything else is not an answer, and the prompt repeats.</li>
+  <li>An absent operator, which is what happens when piped input runs out, is recorded as <strong>no operator input available</strong> rather than as a refusal somebody chose. Those are different facts and the log should not conflate them.</li>
+  <li>Three tests now cover it, including the pasted-command case specifically.</li>
+</ul>
+
+</section>
+<section class="s rv">
+  <span class="snum">05 &nbsp;/&nbsp; Watching the controls work</span>
+  <h2>Three refusals, nothing written</h2>
+
+<p>
+  The repository ships a deliberately tampered session where the model invents a
+  citation, then quotes something real from a section it never read, then reaches for
+  a function that does not exist. Each is stopped by a different control:
+</p>
+<pre>  read     3-8-security-testing
+<span class="blk">  blocked</span>  record_finding: AC-5: the quoted citation does not appear in the source document.
+<span class="blk">  blocked</span>  record_finding: AC-5: section 'cc8-1-change-management' has not been read in this run.
+<span class="blk">  blocked</span>  delete_register: AC-1: tool 'delete_register' is not on the allowlist.
+
+  gap register  (0 findings)
+  complete:  False</pre>
+<figcaption>Nothing reaches the register. Each refusal returns to the model as a tool error rather than a crash, so it can try a permitted route instead.</figcaption>
+<p>
+  Twenty-four tests pass, each one corresponding to a claim the assessment makes, so
+  the document cannot drift away from the system without something going red. That
+  was the specific failure I was designing against, because it is the one I had
+  already made once on my own work.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">06 &nbsp;/&nbsp; What I would do differently</span>
+  <h2>Three of these are in the assessment as open risks</h2>
+
+<p>
+  The assessment names two risks as high and unmitigated, and I would rather state
+  them here than let the case study read better than the system is.
+</p>
+<ul>
+  <li><strong>Nothing detects an omission.</strong> Every control operates on something the agent did. If it never searches for the right section, no control fires, because nothing was attempted. That is the largest residual risk in the system and the hardest to design around.</li>
+  <li><strong>Confidentiality is unresolved.</strong> A real SOC 2 report belongs to the vendor, and sending passages of it to a third-party model provider is a decision for the receiving organisation, not for whoever runs the tool. Until that is settled the system cannot touch a real report, which is why the assessment says so rather than leaving it implied.</li>
+  <li><strong>Approval should capture a person and a reason</strong>, not a keypress. The control currently proves that somebody pressed a key, which is a weaker claim than it appears.</li>
+  <li><strong>The tool schemas should be generated from the code</strong> rather than compared to it in a test, so they cannot diverge between test runs.</li>
+</ul>
+<p>
+  The wider point, and the reason the assessment has a section the framework does not
+  ask for: NIST AI RMF was written for systems that produce outputs. Applied
+  faithfully to an agent and stopped there, it will be silent on tool authority, on
+  reversibility, on an audit trail of actions rather than outputs, and on human
+  oversight as a control that can itself fail. The fourth one is not theoretical. It
+  is section 7 of my own document, and it happened to me.
+</p>
+
+</section>
+
+</main>
+
+<div class="foot">
+  <div class="wrap">
+    <p>The full risk assessment runs to eight pages and names the four places NIST AI RMF stops short for an agent. The code and its control matrix are on GitHub.</p>
+    <div class="btnrow">
+      <a class="btn btn-primary" href="assets/SoC2_Agent_AI_Risk_Assessment.pdf" target="_blank" rel="noopener">Read the risk assessment</a>
+      <a class="btn btn-ghost" href="https://github.com/sameerbxba/soc2-gap-agent" target="_blank" rel="noopener">Code on GitHub</a>
+      <a class="btn btn-ghost" href="index.html#work">All work</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var nav=document.getElementById('nav'),bar=document.getElementById('progress');
+  function onScroll(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?(y/h)*100:0)+'%';
+    nav.classList.toggle('stuck',y>12);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);onScroll();
+  var rv=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(rv,function(e){e.classList.add('in')});return;
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{rootMargin:'0px 0px -6% 0px',threshold:0.06});
+  Array.prototype.forEach.call(rv,function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

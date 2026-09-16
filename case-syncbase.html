@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study: SyncBase, and auditing my own tool — Sameer Athili</title>
+<meta name="description" content="Building SyncBase, writing a NIST AI RMF assessment of it, and finding a control I had documented as implemented that did not exist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15181f;--slate:#586274;--mute:#7b8595;
+  --navy:#1F4E79;--navy-deep:#102a43;--navy-soft:#2f6094;
+  --paper:#faf8f4;--paper-2:#f3f0e9;--line:#e4dfd5;
+  --accent:#c2703d;--accent-soft:#e6a578;
+  --maxw:780px;--ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  color:var(--ink);background:var(--paper);
+  line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:0%;
+  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;transition:width .08s linear}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);
+  backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid transparent;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
+.navrow{max-width:1080px;margin:0 auto;padding:12px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px}
+.back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-size:13.6px;font-weight:600;color:var(--slate);
+  padding:7px 12px;border-radius:8px;transition:all .25s var(--ease)}
+.back:hover{color:var(--navy);background:var(--paper-2)}
+.back .ar{transition:transform .25s var(--ease)}
+.back:hover .ar{transform:translateX(-3px)}
+.navtag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);white-space:nowrap}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}}
+
+header.head{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);margin-bottom:15px}
+h1{font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.025em;
+  color:var(--navy-deep);margin-bottom:18px}
+.standfirst{font-size:18px;color:var(--slate);line-height:1.65;max-width:62ch}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px;
+  padding-top:24px;border-top:1px solid var(--line)}
+.meta div b{display:block;font-size:10.8px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mute);font-weight:700;margin-bottom:5px}
+.meta div span{font-size:14.2px;color:var(--ink);font-weight:500}
+@media(max-width:700px){.meta{grid-template-columns:repeat(2,1fr);gap:16px}}
+
+section.s{padding:46px 0;border-bottom:1px solid var(--line)}
+section.s:last-of-type{border-bottom:none}
+.snum{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:9px}
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(23px,3.2vw,30px);
+  line-height:1.16;letter-spacing:-.02em;color:var(--navy-deep);margin-bottom:18px}
+h3{font-size:16.5px;font-weight:600;color:var(--navy-deep);margin:26px 0 9px}
+p{margin-bottom:16px;font-size:16.4px;color:var(--slate)}
+p strong{color:var(--ink);font-weight:600}
+ul{list-style:none;margin:0 0 18px}
+li{position:relative;padding:6px 0 6px 22px;color:var(--slate);font-size:16.2px}
+li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;
+  border-radius:50%;border:1.7px solid var(--accent-soft)}
+li strong{color:var(--ink);font-weight:600}
+
+.callout{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:22px 24px;margin:24px 0}
+.callout b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:9px;font-weight:700}
+.callout p:last-child{margin-bottom:0}
+.dark-note{background:var(--navy-deep);color:#dde6ef;border-radius:13px;padding:26px 28px;margin:26px 0}
+.dark-note b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-soft);margin-bottom:10px;font-weight:700}
+.dark-note p{color:#c2cfdc;margin-bottom:14px}
+.dark-note p:last-child{margin-bottom:0}
+.dark-note strong{color:#fff}
+pre{background:var(--navy-deep);color:#d7e2ee;border-radius:11px;padding:18px 20px;
+  overflow-x:auto;margin:20px 0;font-size:13px;line-height:1.72;
+  font-family:'SF Mono',Menlo,Consolas,monospace}
+pre .blk{color:#e6a578}
+figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:italic}
+
+.foot{padding:52px 0 64px;text-align:center;background:var(--paper-2);border-top:1px solid var(--line)}
+.foot p{max-width:56ch;margin:0 auto 22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 21px;border-radius:9px;
+  text-decoration:none;font-size:14.5px;font-weight:600;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 5px 18px rgba(31,78,121,.24)}
+.btn-primary:hover{background:var(--navy-soft);transform:translateY(-2px)}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px)}
+.btnrow{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav id="nav">
+  <div class="navrow">
+    <a class="back" href="index.html#work"><span class="ar">&larr;</span> All work</a>
+    <span class="navtag">Case study</span>
+  </div>
+</nav>
+
+<header class="head">
+  <div class="wrap">
+    <div class="eyebrow rv">Case study &nbsp;·&nbsp; AI governance</div>
+    <h1 class="rv">SyncBase, and what happened when I audited my own tool</h1>
+    <p class="standfirst rv">I built a tool to find where teams are working from contradicting assumptions, then wrote a NIST AI RMF assessment of it. Checking the document against my own source code is where the project actually got interesting.</p>
+    <div class="meta rv">
+      <div><b>Context</b><span>Self-directed</span></div>
+      <div><b>My role</b><span>Design, build, assessment</span></div>
+      <div><b>When</b><span>2026</span></div>
+      <div><b>Built with</b><span>React, Anthropic API, Vercel</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<section class="s rv">
+  <span class="snum">01 &nbsp;/&nbsp; The situation</span>
+  <h2>Building something in order to have something to govern</h2>
+
+<p>
+  SyncBase started as a way to test my own thinking about where generative AI
+  genuinely fits into real work. It reads across a project's documents and flags
+  where teams are working from contradicting assumptions, the quiet kind of mismatch
+  that turns into rework three weeks later.
+</p>
+<p>
+  The second half of the project turned out to matter more than the first. Once it
+  existed, I wrote a full NIST AI Risk Management Framework assessment of it, which
+  meant assessing my own system with nobody to hide behind. That is a different
+  exercise from writing about somebody else's.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">02 &nbsp;/&nbsp; The governance decision</span>
+  <h2>Precision over recall, and stating what it costs</h2>
+
+<p>
+  The model was the easy part. The hard part was deciding which of a long list of
+  flags were the few that actually mattered.
+</p>
+<p>
+  I set the system to surface deliberately fewer conflicts than it could. A tool that
+  flags everything gets ignored on day two, and an ignored tool has a worse risk
+  profile than no tool, because people believe it is watching.
+</p>
+<div class="callout">
+  <b class="lab">What made this a governance decision rather than a tuning choice</b>
+  <p>
+    Choosing precision over recall means accepting that the system will miss real
+    conflicts. The assessment says so in those words, and states what the choice
+    costs rather than only what it buys. A risk document that only records the
+    upside of a decision is a marketing document with a table in it.
+  </p>
+</div>
+<p>
+  The other decision I would defend: the assessment separates the one genuinely AI
+  feature from the rule-based one. Governing string concatenation as though it were a
+  model is how these documents lose credibility with anyone who reads them properly.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">03 &nbsp;/&nbsp; What I got wrong</span>
+  <h2>Three things, and I only found them by checking</h2>
+
+<h3>A control I had documented as implemented did not exist</h3>
+<p>
+  I verified the assessment against my own source code rather than against my memory
+  of what I had built, and found a control marked as implemented that I had never
+  written. The document and the system had diverged, and the document was the
+  confident one.
+</p>
+<h3>The scanner does not work on the deployed site</h3>
+<p>
+  The model call is made from the browser, which works locally and fails once the
+  application is deployed, because the credential cannot be shipped to the client.
+  The live site therefore returns pre-computed results for the sample projects and an
+  error for anything a user creates. For a while the assessment did not say so.
+</p>
+<h3>The document contained a quotation I could not source</h3>
+<p>
+  A quote and an attribution went into an early draft that I could not stand behind
+  on a second read. Both were removed.
+</p>
+<div class="dark-note">
+  <b class="lab">What I changed as a result</b>
+  <p>
+    The assessment now carries a <strong>deployment limitation</strong> section that
+    names the hosting problem directly, a <strong>verification</strong> section
+    stating what was checked against the code and what was not, and a
+    <strong>change log</strong> recording every correction including the removed
+    quote.
+  </p>
+  <p>
+    A governance document that was never wrong usually means nobody checked. The
+    change log is the part of that document I would point to first.
+  </p>
+</div>
+
+</section>
+<section class="s rv">
+  <span class="snum">04 &nbsp;/&nbsp; What changed as a result</span>
+  <h2>The habit, more than the document</h2>
+
+<p>
+  The concrete outputs were a corrected assessment, a set of fixes to the tool, and a
+  disclosure on the live site about what does and does not work.
+</p>
+<p>
+  The durable output was a working method: <strong>verify the document against the
+  running system, not against your memory of building it.</strong> That is what I
+  carried into the next project, and it is what caught a considerably more serious
+  defect there, where a control was recording human decisions that no human had made.
+</p>
+<p>
+  It also changed how I read other people's documents. The first thing I now look for
+  is whether anything in them has ever been corrected.
+</p>
+
+</section>
+<section class="s rv">
+  <span class="snum">05 &nbsp;/&nbsp; What is still open</span>
+  <h2>Stated here rather than left for someone to find</h2>
+
+<ul>
+  <li><strong>The scanner still is not live.</strong> The fix is to move the model call behind a serverless function so the credential stays on the server. It is disclosed rather than solved.</li>
+  <li><strong>Accuracy has never been measured.</strong> No claim about how often the tool is right appears anywhere, because nothing has been measured, and I would rather have a gap than a number I cannot support.</li>
+  <li><strong>The assessment is a self-assessment.</strong> Nobody independent has reviewed either the tool or the document, and the document says so. It is a management assertion, not an audit, and calling it anything else would be exactly the kind of overstatement it exists to avoid.</li>
+</ul>
+
+</section>
+
+</main>
+
+<div class="foot">
+  <div class="wrap">
+    <p>The assessment covers intended use, out-of-scope uses, risk tolerances, a model card, monitoring thresholds and decommission criteria, and carries a change log of everything I corrected.</p>
+    <div class="btnrow">
+      <a class="btn btn-primary" href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">Read the assessment</a>
+      <a class="btn btn-ghost" href="https://syncbase-eight.vercel.app/" target="_blank" rel="noopener">Live site</a>
+      <a class="btn btn-ghost" href="index.html#work">All work</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var nav=document.getElementById('nav'),bar=document.getElementById('progress');
+  function onScroll(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?(y/h)*100:0)+'%';
+    nav.classList.toggle('stuck',y>12);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);onScroll();
+  var rv=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(rv,function(e){e.classList.add('in')});return;
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{rootMargin:'0px 0px -6% 0px',threshold:0.06});
+  Array.prototype.forEach.call(rv,function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

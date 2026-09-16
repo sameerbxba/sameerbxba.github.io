@@ -15,6 +15,7 @@
   --paper:#faf8f4;--paper-2:#f3f0e9;--line:#e4dfd5;
   --accent:#c2703d;--accent-soft:#e6a578;
   --maxw:780px;--ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,.84,.44,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:72px}
@@ -43,8 +44,11 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .navtag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
   font-weight:700;color:var(--accent);white-space:nowrap}
 
-.rv{opacity:0;transform:translateY(18px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rv{opacity:0;transform:translateY(14px);
+  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);
+  will-change:opacity,transform}
 .rv.in{opacity:1;transform:none}
+.rv.settled{will-change:auto}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}}
 
 header.head{padding:64px 0 40px;border-bottom:1px solid var(--line)}
@@ -262,22 +266,29 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
 <script>
 (function(){
-  var nav=document.getElementById('nav'),bar=document.getElementById('progress');
-  function onScroll(){
+  var nav=document.getElementById('nav'),bar=document.getElementById('progress'),ticking=false;
+  function frame(){
+    ticking=false;
     var y=window.scrollY||document.documentElement.scrollTop;
     var h=document.documentElement.scrollHeight-window.innerHeight;
     bar.style.width=(h>0?(y/h)*100:0)+'%';
     nav.classList.toggle('stuck',y>12);
   }
+  function onScroll(){ if(ticking) return; ticking=true; window.requestAnimationFrame(frame); }
   window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',onScroll);onScroll();
+  window.addEventListener('resize',onScroll);frame();
   var rv=document.querySelectorAll('.rv');
   if(!('IntersectionObserver' in window)){
     Array.prototype.forEach.call(rv,function(e){e.classList.add('in')});return;
   }
   var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
-  },{rootMargin:'0px 0px -6% 0px',threshold:0.06});
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in');
+      window.setTimeout(function(){e.target.classList.add('settled')},1100);
+      io.unobserve(e.target);
+    });
+  },{rootMargin:'0px 0px -4% 0px',threshold:0});
   Array.prototype.forEach.call(rv,function(e){io.observe(e)});
 })();
 </script>

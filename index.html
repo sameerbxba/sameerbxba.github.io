@@ -23,6 +23,7 @@
   --accent-soft:#e6a578;
   --maxw:1080px;
   --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,.84,.44,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:74px}
@@ -87,8 +88,13 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 }
 
 /* ============ reveal ============ */
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv{
+  opacity:0;transform:translateY(14px);
+  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);
+  will-change:opacity,transform;
+}
 .rv.in{opacity:1;transform:none}
+.rv.settled{will-change:auto}
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .rv{opacity:1;transform:none;transition:none}
@@ -145,7 +151,9 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 /* ============ sections ============ */
 .block{padding:76px 0;border-top:1px solid var(--line)}
 .block.dark{
-  background:var(--navy-deep);color:#e8edf3;border-top:none;
+  color:#e8edf3;border-top:none;
+  background:linear-gradient(180deg,#16374f 0%,var(--navy-deep) 16%,
+    var(--navy-deep) 84%,#16374f 100%);
 }
 .block.dark .sec-num{color:var(--accent-soft)}
 .block.dark .sec-title{color:#fff}
@@ -716,8 +724,12 @@ footer{
   var sections = links
     .map(function (a) { return document.querySelector(a.getAttribute('href')); })
     .filter(Boolean);
+  var ticking = false;
 
-  function onScroll() {
+  // Reading layout on every scroll event is what makes a page feel sticky.
+  // One read per animation frame instead.
+  function frame() {
+    ticking = false;
     var y = window.scrollY || document.documentElement.scrollTop;
     var h = document.documentElement.scrollHeight - window.innerHeight;
     bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
@@ -725,16 +737,22 @@ footer{
 
     var current = null;
     for (var i = 0; i < sections.length; i++) {
-      if (sections[i].getBoundingClientRect().top <= 140) { current = sections[i]; }
+      if (sections[i].getBoundingClientRect().top <= 160) { current = sections[i]; }
     }
     links.forEach(function (a) {
       a.classList.toggle('active', !!current && a.getAttribute('href') === '#' + current.id);
     });
   }
 
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(frame);
+  }
+
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
-  onScroll();
+  frame();
 
   var reveal = document.querySelectorAll('.rv');
   if (!('IntersectionObserver' in window)) {
@@ -749,11 +767,14 @@ footer{
         el.parentNode ? el.parentNode.querySelectorAll(':scope > .rv') : []
       );
       var idx = Math.max(0, siblings.indexOf(el));
-      el.style.transitionDelay = Math.min(idx * 70, 280) + 'ms';
+      el.style.transitionDelay = Math.min(idx * 55, 190) + 'ms';
       el.classList.add('in');
+      // Drop the compositor hint once the animation is over, so long pages
+      // are not holding a layer for every element on them.
+      window.setTimeout(function () { el.classList.add('settled'); }, 1100);
       io.unobserve(el);
     });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  }, { rootMargin: '0px 0px -4% 0px', threshold: 0 });
   Array.prototype.forEach.call(reveal, function (el) { io.observe(el); });
 })();
 </script>

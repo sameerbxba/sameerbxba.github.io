@@ -402,6 +402,39 @@ footer{
         </div>
       </div>
       <div class="proj rv">
+        <div class="tags"><span class="tag">Governance</span><span class="tag">Controls</span><span class="tag">Python</span></div>
+        <h3>An attestation cycle that refuses to count what it cannot prove</h3>
+        <p>
+          Every application in a register has an owner, and once a quarter the owner is
+          asked to confirm the record is still accurate. That process fails quietly:
+          some owners have left, some replies are not answers, some records change after
+          they were confirmed, and someone reports the response rate because it is the
+          number that is easy to get. This is that cycle written as code, with the
+          failures made visible instead of absorbed.
+        </p>
+        <p>
+          Eight controls decide what counts. A reply in prose is not an attestation. A
+          colleague answering for the owner is not an attestation. A reply after the
+          deadline cannot undo the deadline. Every attestation is bound by digest to the
+          exact version of the record the owner saw, so an edit made afterwards stops it
+          counting without anyone having to notice. The recorded quarter returns a 90
+          percent response rate and 23 percent coverage, and the gap between those two
+          numbers is the finding.
+        </p>
+        <div class="took">
+          <b>What it taught me:</b> the first version contradicted its own headline claim.
+          A reply arriving after expiry overwrote the "not attested" exception and
+          recorded a full attestation, taking coverage to 100 percent. An adversarial
+          review found it, along with five controls whose tests still passed with the
+          control deleted. The failures, and the fixes, are written into the control
+          matrix under their own heading, because a governance document that was never
+          wrong usually means nobody checked.
+        </div>
+        <div class="plinks">
+          <a class="plink" href="https://github.com/sameerbxba/portfolio-attestation" target="_blank" rel="noopener">Code on GitHub</a>
+        </div>
+      </div>
+      <div class="proj rv">
         <div class="tags"><span class="tag">Data</span><span class="tag">SQL &amp; Python</span><span class="tag">OLG</span></div>
         <h3>Reconciliation, from two hours to ten minutes</h3>
         <p>

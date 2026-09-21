@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study: an attestation cycle that refuses to count what it cannot prove · Sameer Athili</title>
+<meta name="description" content="How I wrote a quarterly application attestation cycle as code, the eight controls that decide what counts, and the late reply that quietly took coverage to 100 percent in the first version.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15181f;--slate:#586274;--mute:#7b8595;
+  --navy:#1F4E79;--navy-deep:#102a43;--navy-soft:#2f6094;
+  --paper:#faf8f4;--paper-2:#f3f0e9;--line:#e4dfd5;
+  --accent:#c2703d;--accent-soft:#e6a578;
+  --maxw:780px;--ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,.84,.44,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  color:var(--ink);background:var(--paper);
+  line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:100%;
+  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;
+  transform:scaleX(0);transform-origin:0 50%;will-change:transform}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid transparent;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
+.navrow{max-width:1080px;margin:0 auto;padding:12px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px}
+.back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-size:13.6px;font-weight:600;color:var(--slate);
+  padding:7px 12px;border-radius:8px;transition:all .25s var(--ease)}
+.back:hover{color:var(--navy);background:var(--paper-2)}
+.back .ar{transition:transform .25s var(--ease)}
+.back:hover .ar{transform:translateX(-3px)}
+.navtag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);white-space:nowrap}
+
+.rv{opacity:0;transform:translateY(14px);
+  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);
+  will-change:opacity,transform}
+.rv.in{opacity:1;transform:none}
+.rv.settled{will-change:auto}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}}
+
+header.head{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);margin-bottom:15px}
+h1{font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.025em;
+  color:var(--navy-deep);margin-bottom:18px}
+.standfirst{font-size:18px;color:var(--slate);line-height:1.65;max-width:62ch}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px;
+  padding-top:24px;border-top:1px solid var(--line)}
+.meta div b{display:block;font-size:10.8px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mute);font-weight:700;margin-bottom:5px}
+.meta div span{font-size:14.2px;color:var(--ink);font-weight:500}
+@media(max-width:700px){.meta{grid-template-columns:repeat(2,1fr);gap:16px}}
+
+section.s{padding:46px 0;border-bottom:1px solid var(--line)}
+section.s:last-of-type{border-bottom:none}
+.snum{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:9px}
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(23px,3.2vw,30px);
+  line-height:1.16;letter-spacing:-.02em;color:var(--navy-deep);margin-bottom:18px}
+h3{font-size:16.5px;font-weight:600;color:var(--navy-deep);margin:26px 0 9px}
+p{margin-bottom:16px;font-size:16.4px;color:var(--slate)}
+p strong{color:var(--ink);font-weight:600}
+ul{list-style:none;margin:0 0 18px}
+li{position:relative;padding:6px 0 6px 22px;color:var(--slate);font-size:16.2px}
+li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;
+  border-radius:50%;border:1.7px solid var(--accent-soft)}
+li strong{color:var(--ink);font-weight:600}
+
+.callout{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:22px 24px;margin:24px 0}
+.callout b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:9px;font-weight:700}
+.callout p:last-child{margin-bottom:0}
+.dark-note{background:var(--navy-deep);color:#dde6ef;border-radius:13px;padding:26px 28px;margin:26px 0}
+.dark-note b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-soft);margin-bottom:10px;font-weight:700}
+.dark-note p{color:#c2cfdc;margin-bottom:14px}
+.dark-note p:last-child{margin-bottom:0}
+.dark-note strong{color:#fff}
+pre{background:var(--navy-deep);color:#d7e2ee;border-radius:11px;padding:18px 20px;
+  overflow-x:auto;margin:20px 0;font-size:13px;line-height:1.72;
+  font-family:'SF Mono',Menlo,Consolas,monospace}
+pre .blk{color:#e6a578}
+figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:italic}
+
+.foot{padding:52px 0 64px;text-align:center;background:var(--paper-2);border-top:1px solid var(--line)}
+.foot p{max-width:56ch;margin:0 auto 22px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 21px;border-radius:9px;
+  text-decoration:none;font-size:14.5px;font-weight:600;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 5px 18px rgba(31,78,121,.24)}
+.btn-primary:hover{background:var(--navy-soft);transform:translateY(-2px)}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px)}
+.btnrow{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav id="nav">
+  <div class="navrow">
+    <a class="back" href="index.html#work"><span class="ar">&larr;</span> All work</a>
+    <span class="navtag">Case study</span>
+  </div>
+</nav>
+
+<header class="head">
+  <div class="wrap">
+    <div class="eyebrow rv">Case study &nbsp;·&nbsp; IT governance</div>
+    <h1 class="rv">An attestation cycle that refuses to count what it cannot prove</h1>
+    <p class="standfirst rv">Every application register is maintained by asking owners to confirm it once a quarter. I wrote that cycle as code, made each of its quiet failures visible, and then found out the first version was quietly failing in a way of its own.</p>
+    <div class="meta rv">
+      <div><b>Context</b><span>Self-directed</span></div>
+      <div><b>My role</b><span>Design, build, review</span></div>
+      <div><b>When</b><span>2026</span></div>
+      <div><b>Built with</b><span>Python, pytest</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="s rv">
+    <span class="snum">01 &nbsp;/&nbsp; The situation</span>
+    <h2>A process that fails without anyone refusing</h2>
+
+    <p>
+      An application register is the thing the rest of IT governance hangs off. Access
+      reviews, vendor assessments, continuity planning and audit scope all start by
+      asking what systems exist and who owns them. The register is usually kept accurate
+      by emailing every owner once a quarter and asking them to confirm their record.
+    </p>
+    <p>
+      Nobody refuses. What happens instead is quieter. Some owners have left. Some
+      replies say "looks fine" without confirming anything. Some records change the week
+      after they were confirmed. And at the end, somebody reports the response rate,
+      because it is the number that is easy to get, and the register acquires a column
+      of green ticks that nobody can explain.
+    </p>
+    <p>
+      I wanted to build the cycle so that each of those failures had to show up
+      somewhere, rather than being absorbed. The SOC 2 agent I had built earlier turned on
+      one question, what should a system be <strong>stopped</strong> from doing. This
+      project asks the same question of a much more ordinary piece of work, and the
+      answer turned out to be most of the design.
+    </p>
+
+  </section>
+  <section class="s rv">
+    <span class="snum">02 &nbsp;/&nbsp; What I built</span>
+    <h2>A cycle, and eight rules about what counts</h2>
+
+    <p>
+      The cycle opens, sends a request to every in-scope application's owner, classifies
+      each reply as a decision or as a reason it was not one, escalates what is overdue,
+      expires what is never answered, and refuses to close while anything is unresolved.
+      Time is a parameter rather than a clock, which is what makes the deadline logic
+      testable at all.
+    </p>
+    <p>
+      The interesting part is not that it sends the emails. It is what it refuses to
+      count:
+    </p>
+    <ul>
+      <li><strong>An application with no active, known owner</strong> is recorded as an exception against the population. It never quietly leaves the denominator.</li>
+      <li><strong>A reply that is not an explicit decision</strong> is not an attestation. Prose, an out of office, a bounce and a reply with two answers are each recorded with their own reason, and the request stays open.</li>
+      <li><strong>Every attestation is bound to the exact version of the record the owner saw.</strong> The request embeds a digest of the attestable fields, the reply carries it back, and if the record is amended afterwards the attestation stops counting without anybody having to notice.</li>
+      <li><strong>A reply from anyone other than the owner of record</strong> is refused before it can reach the record at all, however helpful the colleague was being.</li>
+      <li><strong>Silence escalates once and then expires as "not attested".</strong> Elapsed time can make a request louder and then final. It can never turn it into an answer.</li>
+      <li><strong>Coverage is measured against everything in scope</strong>, and it is printed next to the response rate every time, because the gap between them is the finding.</li>
+    </ul>
+    <p>
+      The recorded quarter that ships with the repository returns a 90 percent response
+      rate and 23 percent coverage. Both numbers are true. Only one of them describes
+      the register.
+    </p>
+
+  </section>
+  <section class="s rv">
+    <span class="snum">03 &nbsp;/&nbsp; The decision that mattered</span>
+    <h2>Strict matching, and paying for it out loud</h2>
+
+    <p>
+      The request asks the owner to reply with exactly one of three words on a line of
+      its own. The system looks for that word and nothing else. "Yes, that all looks
+      right to me" is not recorded as an attestation, and the owner gets a clarification
+      telling them so.
+    </p>
+    <p>
+      That will annoy people who answered in good faith, and I chose it anyway. The
+      alternative is a parser that infers intent from a sentence, and a parser can be
+      wrong without announcing it. The green tick it produces is indistinguishable from a
+      real one, and somebody will later be asked how it got there. Annoying the owner is
+      the cheaper failure, because it is visible and it is theirs to fix.
+    </p>
+    <div class="callout">
+      <b class="lab">The principle</b>
+      <p>
+        When a control has to trade one failure for another, choose the failure that is
+        visible over the one that is not, and write down what the choice costs. A cost
+        that is stated can be argued with. A cost that is hidden is just a defect nobody
+        has found yet.
+      </p>
+    </div>
+    <p>
+      The same instinct produced the digest. An attestation is a statement about a
+      specific version of a record, and without something that identifies that version,
+      the attestation silently transfers to whatever the record says later. The digest
+      is twelve characters in an email, and it is the reason a quiet edit two days after
+      the owner confirmed shows up in the report instead of disappearing into it.
+    </p>
+
+  </section>
+  <section class="s rv">
+    <span class="snum">04 &nbsp;/&nbsp; What I got wrong</span>
+    <h2>The headline claim was false, by a route I had not tried</h2>
+
+    <p>
+      Every sentence in the repository said that silence could never become an
+      attestation. The code checked that an application had been requested. It never
+      checked that the application had already been <strong>resolved</strong>. So a reply
+      arriving after the deadline overwrote the "not attested" exception, recorded a
+      full attestation, and took coverage to 100 percent.
+    </p>
+    <div class="dark-note">
+      <b class="lab">How it was found</b>
+      <p>
+        Not by reading. I had the first version reviewed adversarially: every control
+        deleted in turn and the test suite re-run, every claim in the documentation
+        checked against the code. The late reply was the first finding. The second was
+        that <strong>five of the controls were defended by tests that still passed with
+        the control removed</strong>. The documentation described a system one revision
+        ahead of the one in the repository.
+      </p>
+    </div>
+    <p>
+      Fixing the first round introduced two failures of its own, which a second review
+      caught. A bounce is identified by its subject line, skips the owner check because
+      it legitimately comes from a mail daemon, and had been made terminal. Anyone who
+      could send mail could remove an application from coverage for the quarter by
+      writing "Undeliverable:" at the top of a message. And the pattern that reads the
+      record reference, loosened so that a corrupted digest would keep its application
+      instead of landing in a discard pile, now matched references inside URLs and quoted
+      earlier requests, on the one line that decides which record an answer is filed
+      against.
+    </p>
+    <p>
+      All of it is written into the control matrix under its own heading, because a
+      governance document that was never wrong usually means nobody checked. The tests
+      that now defend each of those controls live in one file, and each is named for the
+      failure it was written for.
+    </p>
+
+  </section>
+  <section class="s rv">
+    <span class="snum">05 &nbsp;/&nbsp; Watching the controls work</span>
+    <h2>Almost nothing closes an item</h2>
+
+    <p>
+      The recorded quarter is fourteen applications, one out of scope, with the defects
+      real registers have planted in it: an owner who has left, an owner who was never in
+      the directory, an empty owner cell, and a record amended after its owner confirmed
+      it. Ten requests go out and nine messages come back. Four are decisions.
+    </p>
+<pre>  could not be asked
+    APP-004  owner_inactive   AT-1: APP-004 is owned by lena.ostrowski@meridianfin.example, who is not active.
+    APP-005  no_owner         AT-1: APP-005 has no owner recorded.
+    APP-008  no_owner         AT-1: APP-008 names owner 'j.kaur@meridianfin.example', who is not in the owner directory.
+
+  replies
+    day  1  APP-009  not a decision (auto_reply), still open
+    day  1  APP-011  undeliverable: APP-011 closed, the request never arrived
+    day  2  APP-010  not a decision (wrong_owner), still open
+    day  3  APP-007  not a decision (unparseable), clarification sent, still open
+    day  4  APP-002  register amended, attestation on file no longer matches
+
+  day 11  escalated to line management: APP-006, APP-007, APP-009, APP-010, APP-013
+  day 21  recorded as not attested: APP-006, APP-007, APP-009, APP-010, APP-013
+
+  response rate    90.0%   (9 replies to 10 requests)
+  COVERAGE         23.1%   (3 valid attestations across 13 in scope)</pre>
+    <figcaption>Verbatim from <code>python -m attest.cli run</code>, with the successful attestations cut for length. Every line quoted here is asserted by a test against a golden transcript, so the page cannot drift from the program.</figcaption>
+    <p>
+      Read the numerator of that first figure and it gets worse. Three of the nine
+      replies are a bounce from a mail daemon, an autoresponder, and a colleague
+      answering for an owner on leave. Six are messages an owner actually wrote, and they
+      come from three people. The denominator excludes the three applications the cycle
+      could not ask about at all. Every one of those errors pushes the number up, which
+      is how a metric like this survives: nobody checks what it counts, because its
+      name already tells them.
+    </p>
+
+  </section>
+  <section class="s rv">
+    <span class="snum">06 &nbsp;/&nbsp; What I would do differently</span>
+    <h2>Where the controls do not reach</h2>
+
+    <p>
+      Stated here rather than left to the README, because the point of the project is
+      not to overclaim.
+    </p>
+    <ul>
+      <li><strong>Nothing detects an omission.</strong> An application nobody ever entered is outside the population, so it cannot be unresolved, cannot be an exception, and does not reduce coverage. Every figure the system prints is conditional on the register being complete, and nothing tests that. It is the largest residual risk and the evidence of the failure is by definition absent.</li>
+      <li><strong>The digest proves the version, not the truth of it.</strong> An owner can confirm a record that is wrong in every field, and every control will pass. The claim is narrow: what they agreed to can be identified exactly.</li>
+      <li><strong>It has never run against a real register</strong>, and it does not send email. The outbound side is a port with a recorded implementation, which is the tradeoff that makes the controls testable and the one thing the project asks you to take on trust.</li>
+      <li><strong>Nothing is authenticated.</strong> Sender identity is a string compared against the owner's address. That is a control against a colleague being helpful, not against anyone who wants to forge a reply.</li>
+      <li><strong>Escalation stops at one tier</strong>, with no route to a documented risk acceptance, so a cycle can close with a tier 1 application unattested and nobody obliged to decide anything about it. The report makes that visible. It does not make it anyone's problem.</li>
+    </ul>
+
+  </section>
+
+</main>
+
+<div class="foot">
+  <div class="wrap">
+    <p>The control matrix maps each of the eight controls to the code that enforces it and the tests that prove it does, and keeps a section on what the first version got wrong. Both are on GitHub.</p>
+    <div class="btnrow">
+      <a class="btn btn-primary" href="https://github.com/sameerbxba/portfolio-attestation" target="_blank" rel="noopener">Code on GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/sameerbxba/portfolio-attestation/blob/main/CONTROLS.md" target="_blank" rel="noopener">Read the control matrix</a>
+      <a class="btn btn-ghost" href="index.html#work">All work</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var nav=document.getElementById('nav'),bar=document.getElementById('progress');
+  var limit=0,ticking=false;
+  function measure(){limit=document.documentElement.scrollHeight-window.innerHeight}
+  function frame(){
+    ticking=false;
+    var y=window.scrollY||window.pageYOffset||0;
+    var p=limit>0?y/limit:0;
+    bar.style.transform='scaleX('+(p<0?0:p>1?1:p)+')';
+    nav.classList.toggle('stuck',y>12);
+  }
+  function onScroll(){ if(ticking) return; ticking=true; window.requestAnimationFrame(frame); }
+  measure();frame();
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',function(){measure();frame()});
+  window.addEventListener('load',measure);
+  var rv=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(rv,function(e){e.classList.add('in')});return;
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in');
+      window.setTimeout(function(){e.target.classList.add('settled')},1100);
+      io.unobserve(e.target);
+    });
+  },{rootMargin:'0px 0px -4% 0px',threshold:0});
+  Array.prototype.forEach.call(rv,function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

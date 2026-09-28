@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sameer Athili — Technology Risk &amp; AI Governance</title>
-<meta name="description" content="Sameer Athili. Technology risk and AI governance. Selected work, experience, and the risk assessments behind the tools I build.">
+<title>Sameer Athili: Delivery, Analytics &amp; Technology Risk</title>
+<meta name="description" content="Sameer Athili. Program delivery, analytics and technology risk. System rollouts, reporting leadership decides from, and AI governance work written up honestly.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Sameer Athili: technology risk and AI governance">
-<meta property="og:description" content="Case studies in technology risk, AI governance and delivery, written up honestly, including what went wrong.">
+<meta property="og:title" content="Sameer Athili: delivery, analytics and technology risk">
+<meta property="og:description" content="Program delivery, analytics and AI governance, written up honestly, including what went wrong.">
 <meta property="og:url" content="https://sameerbxba.github.io/">
 <meta property="og:image" content="https://sameerbxba.github.io/assets/og-home.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:site_name" content="Sameer Athili">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Sameer Athili: technology risk and AI governance">
-<meta name="twitter:description" content="Case studies in technology risk, AI governance and delivery, written up honestly, including what went wrong.">
+<meta name="twitter:title" content="Sameer Athili: delivery, analytics and technology risk">
+<meta name="twitter:description" content="Program delivery, analytics and AI governance, written up honestly, including what went wrong.">
 <meta name="twitter:image" content="https://sameerbxba.github.io/assets/og-home.png">
 <meta name="theme-color" content="#faf8f4">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102a43'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' fill='%23faf8f4'%3ESA%3C/text%3E%3C/svg%3E">
@@ -182,6 +182,8 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
   margin:16px auto 0;line-height:1.7;
 }
 .lede-2 strong{color:var(--ink);font-weight:600}
+.creds{margin-top:26px;font-size:13px;color:var(--mute);letter-spacing:.02em}
+
 .lede,.lede-2{text-wrap:pretty}
 .lede strong{color:var(--ink);font-weight:600}
 .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
@@ -274,6 +276,17 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .feat .pbody p{font-size:15.6px}
 .feat .took{margin-top:4px}
 
+.group-head{
+  display:flex;align-items:center;gap:16px;margin:0 0 20px;scroll-margin-top:80px;
+  font-family:'Fraunces',serif;font-size:19px;font-weight:500;color:var(--navy-deep);
+}
+.group-head::after{content:'';flex:1;height:1px;background:var(--line)}
+.projects + .group-head,.grid.sub + .group-head{margin-top:60px}
+.projects.grid.sub{margin-top:20px}
+.feat .pmeta{font-size:13.4px;color:var(--mute);line-height:1.55;margin:12px 0 0}
+.proj .note{
+  font-size:13.6px;color:var(--mute);margin:14px 0 0;line-height:1.55;
+}
 .more-head{
   display:flex;align-items:center;gap:16px;margin:46px 0 20px;
   font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
@@ -412,8 +425,9 @@ footer{
   .navlinks a{padding:5px 5px;font-size:11.4px;letter-spacing:-.01em}
   .hero{padding:44px 0 52px}
   .avatar{width:104px;height:104px;margin-bottom:20px;border-width:4px}
-  .eyebrow{flex-direction:column;align-items:center;gap:6px;letter-spacing:.13em}
+  .eyebrow{flex-direction:column;align-items:center;gap:6px;letter-spacing:.07em;font-size:10.6px}
   .eyebrow .loc{padding-left:0}
+  .eyebrow .wide{display:none}
   .eyebrow .loc::before{display:none}
   .lede-2{font-size:15.5px}
   .block{padding:56px 0}
@@ -421,6 +435,8 @@ footer{
   .took{padding:12px 13px;font-size:14.2px}
   .proj p{font-size:15px}
   .more-head{margin-top:36px}
+  .group-head{font-size:17px}
+  .projects + .group-head,.grid.sub + .group-head{margin-top:44px}
   .wrap{padding:0 16px}
 </style>
 </head>
@@ -448,20 +464,22 @@ footer{
   <div class="wrap inner">
     <img class="avatar" src="assets/avatar.webp" width="132" height="132" alt="Sameer Athili" fetchpriority="high">
     <div class="whoami">Sameer Athili</div>
-    <div class="eyebrow"><span>Analytics &nbsp;·&nbsp; Delivery &nbsp;·&nbsp; Technology Risk</span><span class="loc">Toronto / GTA</span></div>
-    <h1>I turn ambiguous problems into<br><span class="em">things people can act on.</span></h1>
+    <div class="eyebrow"><span><span class="wide">Program </span>Delivery &nbsp;·&nbsp; Analytics &nbsp;·&nbsp; Technology Risk</span><span class="loc">Toronto / GTA</span></div>
+    <h1>Programs that land, numbers people trust,<br><span class="em">and controls that hold.</span></h1>
     <p class="lede">
-      I work at the point where a technical decision has to become something a business
-      can actually act on, which usually means finding the real problem, testing it
-      against evidence, and turning it into a recommendation somebody can own.
+      Across five co-op terms in insurance, shipbuilding, a Crown corporation and an
+      early-stage AI company, the job kept coming back to the same thing: finding where
+      work actually gets stuck, measuring it, and getting a fix adopted by the people
+      who have to live with it.
     </p>
     <p class="lede-2">
-      In practice that has been <strong>reporting and analysis</strong> people act on,
-      <strong>delivery</strong> across teams that cannot see past their own step, and
-      most recently <strong>AI governance</strong>: writing the risk assessments,
-      building the controls into the systems themselves, and then checking whether
-      those controls actually hold.
+      In practice that has meant <strong>delivery</strong> on system rollouts across teams
+      that could not see past their own step, <strong>reporting and analysis</strong> that
+      leadership makes decisions from, and most recently <strong>AI governance</strong>:
+      writing the risk assessments, building the controls into the systems themselves,
+      and then checking whether those controls actually hold.
     </p>
+    <p class="creds">University of Waterloo Engineering &nbsp;·&nbsp; PMI CAPM &nbsp;·&nbsp; Five co-op terms</p>
   </div>
 </header>
 
@@ -470,14 +488,84 @@ footer{
   <div class="wrap">
     <div class="sec-head rv">
       <span class="sec-num">01 &nbsp;/&nbsp; Selected work</span>
-      <h2 class="sec-title">Things I built, and the documents that hold them to account</h2>
+      <h2 class="sec-title">Delivery, analysis, and the controls behind them</h2>
       <p class="sec-intro">
-        Two of these are systems I designed and deployed myself. Two are the risk
-        assessments I then wrote about them, including the parts where the documentation
-        and the implementation had diverged. The rest came out of co-op terms.
+        Three pieces of delivery and analysis from co-op terms, then four governance
+        projects I built and audited myself, including the parts where the documentation
+        and the implementation had diverged.
       </p>
     </div>
 
+    <div class="group-head rv" id="work-delivery"><span>Delivery &amp; analytics</span></div>
+    <div class="projects">
+      <article class="proj feat rv">
+        <div class="phead">
+          <div class="tags"><span class="tag">Delivery</span><span class="tag">Enablement</span><span class="tag">Seaspan</span></div>
+          <h3>A Salesforce Service Cloud rollout, from discovery to go-live</h3>
+          <p class="pmeta">Seaspan ULC, North Vancouver<br>Digital Solutions &amp; Project Management co-op, 2025</p>
+        </div>
+        <div class="pbody">
+          <p>
+            Seven departments, each with its own intake process, and nobody able to see the
+            whole flow. I ran discovery across all seven, mapped case, warranty, approval and
+            escalation end to end in BPMN, split that into the requirements the build ran on,
+            and coordinated testing and release readiness through to a launch with zero
+            critical defects.
+          </p>
+          <p>
+            Going live was not the finish line. I wrote the end-user training and job aids so
+            the people using it every day could actually work in it, and built the resource
+            and capacity reporting that managers used directly for planning decisions.
+          </p>
+          <div class="took">
+            <b>The real result:</b> teams who only knew their own step started working from one
+            shared picture, and when my lead was away the cadence, the backlog and the decision
+            log all kept running without escalation.
+          </div>
+        </div>
+      </article>
+    </div>
+    <div class="projects grid sub">
+      <article class="proj rv">
+        <div class="tags"><span class="tag">Data</span><span class="tag">SQL &amp; Python</span><span class="tag">OLG</span></div>
+        <h3>Reconciliation, from two hours to ten minutes</h3>
+        <p>
+          At Ontario Lottery and Gaming I used SQL and Python to match financial, transaction
+          and vendor records across systems, surfacing discrepancies and missing approvals
+          that nobody had the time to catch by hand. I then automated four recurring
+          reconciliation and reporting workflows around those checks.
+        </p>
+        <div class="took">
+          <b>The result:</b> the clearest of the four took about two hours manually and ran in
+          roughly ten minutes afterwards, and the reporting became more consistent because the
+          process stopped depending on who happened to run it. I also built the Tableau and
+          Power BI views leadership used weekly, designed around the decision each audience
+          actually had to make.
+        </div>
+      </article>
+      <article class="proj rv">
+        <div class="tags"><span class="tag">Process</span><span class="tag">ServiceNow</span><span class="tag">Equitable Life</span></div>
+        <h3>Approval workflow redesign</h3>
+        <p>
+          Approvals were slow, and the conversation in the room was about how much of the
+          process to automate. Two weeks of shadowing showed that a meaningful share of them
+          involved judgment calls the users did not want automated away, so I categorised
+          approvals into rule-based and judgment-required, put rough volumes against each,
+          and proposed the split: routing rules for the first group, a structured review
+          queue for the second.
+        </p>
+        <div class="took">
+          <b>Why it worked:</b> users adopted it without resistance, because they kept
+          oversight exactly where it mattered to them. The lesson that stuck: the numbers
+          only set up the real decision, which was where a person's judgment had to stay.
+        </div>
+        <div class="plinks">
+          <a class="plink go" href="case-approval-workflow.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </article>
+    </div>
+
+    <div class="group-head rv" id="work-governance"><span>Technology risk &amp; AI governance</span></div>
     <div class="projects">
       <article class="proj feat rv">
         <div class="phead">
@@ -543,8 +631,7 @@ footer{
             recorded a full attestation, taking coverage to 100 percent. An adversarial
             review found it, along with five controls whose tests still passed with the
             control deleted. The failures, and the fixes, are written into the control
-            matrix under their own heading, because a governance document that was never
-            wrong usually means nobody checked.
+            matrix under their own heading, so the next reader can see what broke and why.
           </div>
         </div>
         <div class="plinks">
@@ -553,26 +640,7 @@ footer{
         </div>
       </article>
     </div>
-
-    <div class="more-head rv">More work</div>
-    <div class="projects grid">
-      <article class="proj rv">
-        <div class="tags"><span class="tag">Data</span><span class="tag">SQL &amp; Python</span><span class="tag">OLG</span></div>
-        <h3>Reconciliation, from two hours to ten minutes</h3>
-        <p>
-          At Ontario Lottery and Gaming I used SQL and Python to match financial, transaction
-          and vendor records across systems, surfacing discrepancies and missing approvals
-          that nobody had the time to catch by hand. I then automated four recurring
-          reconciliation and reporting workflows around those checks.
-        </p>
-        <div class="took">
-          <b>The result:</b> the clearest of the four took about two hours manually and ran in
-          roughly ten minutes afterwards, and the reporting became more consistent because the
-          process stopped depending on who happened to run it. I also built the Tableau and
-          Power BI views leadership used weekly, designed around the decision each audience
-          actually had to make.
-        </div>
-      </article>
+    <div class="projects grid sub">
       <article class="proj rv">
         <div class="tags"><span class="tag">Generative AI</span><span class="tag">Personal build</span><span class="tag">2026</span></div>
         <h3>SyncBase</h3>
@@ -588,31 +656,12 @@ footer{
           judgment call rather than a technical one. I chose precision over recall, because
           a tool that flags everything gets ignored on day two.
         </div>
+        <p class="note">The live version is a front-end demo: projects are stored in your
+        browser and the scanner shows pre-computed results, so it runs without an API key.</p>
         <div class="plinks">
           <a class="plink go" href="case-syncbase.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
-          <a class="plink" href="https://syncbase-eight.vercel.app/" target="_blank" rel="noopener">Live site <span class="ar" aria-hidden="true">&#8599;</span></a>
+          <a class="plink" href="https://syncbase-eight.vercel.app/" target="_blank" rel="noopener">Live demo <span class="ar" aria-hidden="true">&#8599;</span></a>
           <a class="plink" href="https://github.com/sameerbxba/syncbase" target="_blank" rel="noopener">Code on GitHub <span class="ar" aria-hidden="true">&#8599;</span></a>
-        </div>
-      </article>
-      <article class="proj rv">
-        <div class="tags"><span class="tag">Process</span><span class="tag">ServiceNow</span><span class="tag">Equitable Life</span></div>
-        <h3>Approval workflow redesign</h3>
-        <p>
-          Approvals were slow, and the conversation in the room was about how much of the
-          process to automate. Two weeks of shadowing showed that a meaningful share of them
-          involved judgment calls the users did not want automated away, so I categorised
-          approvals into rule-based and judgment-required, put rough volumes against each,
-          and proposed the split: routing rules for the first group, a structured review
-          queue for the second.
-        </p>
-        <div class="took">
-          <b>Why it worked:</b> users adopted it without resistance, because they kept
-          oversight exactly where it mattered to them. The lesson that stuck is that the
-          analysis was the easy part, and getting the human judgment call right was the
-          whole game.
-        </div>
-        <div class="plinks">
-          <a class="plink go" href="case-approval-workflow.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
         </div>
       </article>
       <article class="proj rv">
@@ -637,21 +686,6 @@ footer{
         </div>
         <div class="plinks">
           <a class="plink go" href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">Read the assessment <span class="ar" aria-hidden="true">&#8599;</span></a>
-        </div>
-      </article>
-      <article class="proj rv">
-        <div class="tags"><span class="tag">Delivery</span><span class="tag">Salesforce</span><span class="tag">Seaspan</span></div>
-        <h3>Warranty build, discovery to go-live</h3>
-        <p>
-          Seven departments, each with its own intake process, and nobody able to see the
-          whole flow. I ran discovery across all seven, mapped case, warranty, approval and
-          escalation end to end, split that into the requirements the Salesforce build ran
-          on, and coordinated testing through to a launch with zero critical defects.
-        </p>
-        <div class="took">
-          <b>The real result:</b> teams who only knew their own step started working from one
-          shared picture, and when my lead was away the cadence, the backlog and the decision
-          log all kept running without escalation.
         </div>
       </article>
     </div>
@@ -718,6 +752,8 @@ footer{
             <li>RAID logs and change control</li>
             <li>UAT coordination and release readiness</li>
             <li>Scrum, backlog and Kanban</li>
+            <li>Training and enablement for new systems</li>
+            <li>Jira, Confluence, Smartsheet, MS Project</li>
           </ul>
         </div>
         <div>
@@ -784,7 +820,6 @@ footer{
           <ul>
             <li>Ran market, competitor and customer research for an early-stage AI platform, turning the findings into product and go-to-market recommendations.</li>
             <li>Investigated delivery data to find the real causes of delay, then redesigned the intake and task flow around them, which improved throughput.</li>
-            <li>Learned the lasting lesson that an estimate without a discovery step is a failure already scheduled.</li>
           </ul>
         </div>
       </div>

@@ -21,10 +21,11 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102a43'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' fill='%23faf8f4'%3ESA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js')</script>
 <style>
 :root{
+  --card:#fdfbf7;
   --ink:#15181f;
   --slate:#586274;
   --mute:#646e7e;
@@ -44,7 +45,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:74px}
 body{
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   color:var(--ink);background:var(--paper);
   line-height:1.62;-webkit-font-smoothing:antialiased;
   overflow-x:hidden;
@@ -52,33 +53,24 @@ body{
 a{color:inherit}
 img{max-width:100%;display:block}
 h1,h2,h3,h4,.sec-title{text-wrap:balance}
-:focus-visible{outline:2px solid var(--navy);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:2px solid var(--navy);outline-offset:3px;border-radius:3px}
 .block.dark :focus-visible{outline-color:var(--accent-soft)}
 .skip{
   position:absolute;left:16px;top:-60px;z-index:100;
   background:var(--navy-deep);color:#fff;text-decoration:none;
-  font-size:14px;font-weight:600;padding:10px 16px;border-radius:8px;
-  transition:top .2s var(--ease);
+  font-size:14px;font-weight:600;padding:10px 16px;border-radius:3px;
+  transition:top .2s ease;
 }
 .skip:focus{top:12px}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
 
-/* ============ progress + nav ============ */
-#progress{
-  position:fixed;top:0;left:0;height:2px;width:100%;
-  background:linear-gradient(90deg,var(--navy),var(--accent));
-  z-index:60;transform:scaleX(0);transform-origin:0 50%;
-  will-change:transform;
-}
+/* ============ nav ============ */
 nav{
   position:sticky;top:0;z-index:50;
-  background:rgba(250,248,244,.82);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  background:var(--paper);
   border-bottom:1px solid transparent;
-  transition:border-color .3s var(--ease),box-shadow .3s var(--ease);
 }
-nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
+nav.stuck{border-bottom-color:var(--line);}
 .navrow{
   max-width:var(--maxw);margin:0 auto;padding:13px 28px;
   display:flex;align-items:center;justify-content:space-between;gap:20px;
@@ -90,14 +82,14 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .navlinks{display:flex;gap:4px;align-items:center}
 .navlinks a{
   position:relative;text-decoration:none;font-size:13.5px;font-weight:500;
-  color:var(--slate);padding:6px 11px;border-radius:7px;
-  transition:color .25s var(--ease),background .25s var(--ease);
+  color:var(--slate);padding:6px 11px;border-radius:3px;
 }
 .navlinks a:hover{color:var(--ink);background:var(--paper-2)}
 .navlinks a.active{color:var(--navy-deep)}
+
 .navlinks a.active::after{
-  content:'';position:absolute;left:11px;right:11px;bottom:1px;height:2px;
-  background:var(--accent);border-radius:2px;
+  content:'';position:absolute;left:11px;right:11px;bottom:1px;height:1px;
+  background:var(--navy-deep);border-radius:2px;
 }
 /* Every section below appears in the nav at every width. Nothing is hidden,
    because a nav that drops items stops matching the sections it points at.
@@ -114,43 +106,17 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
   .navrow{justify-content:center;gap:0}
   .navlinks a{padding:6px 7px;font-size:12.2px}
 }
-}
 
-/* ============ reveal ============ */
-.js .rv{
-  opacity:0;transform:translateY(14px);
-  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);
-  will-change:opacity,transform;
-}
-.js .rv.in{opacity:1;transform:none}
-.rv.settled{will-change:auto}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .js .rv{opacity:1;transform:none;transition:none}
-  .hero .inner > *{animation:none!important}
-}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 /* ============ hero ============ */
 .hero{
   text-align:center;padding:80px 0 76px;position:relative;overflow:hidden;
 }
-.hero::before{
-  content:'';position:absolute;top:-220px;left:50%;transform:translateX(-50%);
-  width:820px;height:520px;border-radius:50%;
-  background:radial-gradient(circle,rgba(31,78,121,.09),transparent 66%);
-  pointer-events:none;
-}
 .hero .inner{position:relative;z-index:1}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.hero .inner > *{animation:rise .8s var(--ease-out) both}
-.hero .inner > :nth-child(2){animation-delay:.05s}
-.hero .inner > :nth-child(3){animation-delay:.1s}
-.hero .inner > :nth-child(4){animation-delay:.15s}
-.hero .inner > :nth-child(n+5){animation-delay:.2s}
 .avatar{
   width:132px;height:132px;border-radius:50%;margin:0 auto 26px;
-  object-fit:cover;border:5px solid #fff;
-  box-shadow:0 10px 34px rgba(16,42,67,.16);
+  object-fit:cover;border:1px solid var(--line);
 }
 .whoami{
   font-family:'Fraunces',serif;font-weight:600;font-size:23px;
@@ -163,9 +129,8 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 }
 .eyebrow .loc{color:var(--mute);position:relative;padding-left:15px}
 .eyebrow .loc::before{
-  content:'';position:absolute;left:0;top:50%;width:1px;height:11px;
-  background:var(--line);transform:translateY(-50%);
-  box-shadow:0 0 0 .5px var(--line);
+  content:'';position:absolute;left:0;top:calc(50% - 5.5px);width:1px;height:11px;
+  background:var(--line);
 }
 .hero h1{
   font-family:'Fraunces',serif;font-weight:500;
@@ -189,23 +154,19 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  padding:11px 21px;border-radius:9px;text-decoration:none;
+  padding:11px 21px;border-radius:3px;text-decoration:none;
   font-size:14.5px;font-weight:600;
-  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease);
 }
-.btn-primary{background:var(--navy);color:#fff;box-shadow:0 5px 18px rgba(31,78,121,.24)}
-.btn-primary:hover{background:var(--navy-soft);transform:translateY(-2px);box-shadow:0 9px 26px rgba(31,78,121,.3)}
-.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
-.btn-ghost:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px)}
-.btn .ar{transition:transform .25s var(--ease)}
-.btn:hover .ar{transform:translateX(3px)}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-primary:hover{background:var(--navy-soft);}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:var(--card)}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);}
 
 /* ============ sections ============ */
 .block{padding:76px 0;border-top:1px solid var(--line)}
 .block.dark{
   color:#e8edf3;border-top:none;
-  background:linear-gradient(180deg,#16374f 0%,var(--navy-deep) 16%,
-    var(--navy-deep) 84%,#16374f 100%);
+  background:var(--navy-deep);
 }
 .block.dark .sec-num{color:var(--accent-soft)}
 .block.dark .sec-title{color:#fff}
@@ -225,15 +186,14 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 /* ============ work ============ */
 .projects{display:grid;gap:20px}
 .proj{
-  background:#fff;border:1px solid var(--line);border-radius:14px;
+  background:var(--card);border:1px solid var(--line);border-radius:3px;
   padding:26px 26px 24px;display:flex;flex-direction:column;
-  transition:border-color .3s var(--ease),box-shadow .3s var(--ease);
 }
-.proj:hover{border-color:#d6d0c4;box-shadow:0 10px 30px rgba(16,42,67,.06)}
+
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .tag{
   font-size:10.8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  padding:4px 8px;border-radius:5px;background:var(--paper-2);color:var(--slate);
+  padding:4px 8px;border-radius:3px;background:var(--paper-2);color:var(--slate);
 }
 .tag.hot{background:#f6e6da;color:var(--accent-ink)}
 .proj h3{
@@ -242,25 +202,20 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 }
 .proj p{color:var(--slate);margin-bottom:13px;font-size:15.3px;line-height:1.66}
 .took{
-  background:var(--paper);border-left:3px solid var(--accent);
-  padding:13px 16px;border-radius:0 8px 8px 0;font-size:14.6px;color:var(--slate);
-  line-height:1.62;
+  border-top:1px solid var(--line);padding:12px 0 0;margin-top:4px;
+  font-size:14.6px;color:var(--slate);line-height:1.62;
 }
 .took b{color:var(--ink)}
 .plinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:18px}
 .plink{
   display:inline-flex;align-items:center;gap:6px;
   font-size:13.4px;font-weight:600;text-decoration:none;color:var(--navy);
-  padding:7px 13px;border:1px solid var(--line);border-radius:7px;background:#fff;
-  transition:background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease);
+  padding:7px 13px;border:1px solid var(--line);border-radius:3px;background:var(--card);
 }
 .plink:hover{border-color:var(--navy);background:var(--paper)}
-.plink .ar{font-size:12px;opacity:.7;transition:transform .2s var(--ease)}
-.plink:hover .ar{transform:translate(1px,-1px)}
+.plink .ar{font-size:12px;opacity:.7}
 .plink.go{background:var(--navy);color:#fff;border-color:var(--navy)}
 .plink.go:hover{background:var(--navy-soft);border-color:var(--navy-soft)}
-.plink.go .ar{opacity:1}
-.plink.go:hover .ar{transform:translateX(3px)}
 
 /* The two builds lead, laid out editorially so the text keeps a readable
    line length on wide screens. */
@@ -274,7 +229,10 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .feat .plinks{grid-area:links;flex-direction:column;align-items:flex-start;padding-top:8px;margin-top:0}
 .feat h3{font-size:23px;line-height:1.24;margin-bottom:0}
 .feat .pbody p{font-size:15.6px}
-.feat .took{margin-top:4px}
+.feat .took{
+  border-top:1px solid var(--line);padding:12px 0 0;margin-top:4px;
+  font-size:14.6px;color:var(--slate);line-height:1.62;
+}
 
 .group-head{
   display:flex;align-items:center;gap:16px;margin:0 0 20px;scroll-margin-top:80px;
@@ -323,9 +281,7 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:56px}
 .step{
   border-top:2px solid rgba(230,165,120,.35);padding-top:16px;
-  transition:border-color .3s var(--ease);
 }
-.step:hover{border-top-color:var(--accent)}
 .step .n{
   display:block;font-size:11px;font-weight:700;letter-spacing:.14em;
   color:var(--accent-soft);margin-bottom:8px;font-style:normal;
@@ -398,7 +354,7 @@ nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.0
 .about-body p{color:var(--slate);font-size:16px;margin-bottom:15px;line-height:1.7}
 .about-body p strong{color:var(--ink);font-weight:600}
 .facts{
-  background:#fff;border:1px solid var(--line);border-radius:13px;padding:22px 24px;
+  background:var(--card);border:1px solid var(--line);border-radius:3px;padding:22px 24px;
 }
 .fact{padding:13px 0;border-top:1px solid var(--line)}
 .fact:first-child{border-top:none;padding-top:0}
@@ -431,19 +387,22 @@ footer{
   .eyebrow .loc::before{display:none}
   .lede-2{font-size:15.5px}
   .block{padding:56px 0}
-  .proj,.proj.feat{padding:22px 18px 20px;border-radius:12px}
-  .took{padding:12px 13px;font-size:14.2px}
+  .proj,.proj.feat{padding:22px 18px 20px;border-radius:3px}
+  .took{
+  border-top:1px solid var(--line);padding:12px 0 0;margin-top:4px;
+  font-size:14.6px;color:var(--slate);line-height:1.62;
+}
   .proj p{font-size:15px}
   .more-head{margin-top:36px}
   .group-head{font-size:17px}
   .projects + .group-head,.grid.sub + .group-head{margin-top:44px}
   .wrap{padding:0 16px}
+}
 </style>
 </head>
 <body>
 <a class="skip" href="#work">Skip to the work</a>
 
-<div id="progress"></div>
 <div id="top-sentinel" aria-hidden="true" style="position:absolute;top:0;height:14px;width:1px"></div>
 
 <nav id="nav">
@@ -514,7 +473,7 @@ footer{
           </div>
         </div>
         <div class="plinks">
-          <a class="plink go" href="case-seaspan-rollout.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <a class="plink go" href="case-seaspan-rollout.html">Read the case study</a>
         </div>
       </article>
     </div>
@@ -539,7 +498,7 @@ footer{
           <b>Why it worked:</b> users adopted it without resistance, because they kept oversight exactly where it mattered to them. The data framed the choice, but the choice itself was about where people still needed to make the call.
         </div>
         <div class="plinks">
-          <a class="plink go" href="case-approval-workflow.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <a class="plink go" href="case-approval-workflow.html">Read the case study</a>
         </div>
       </article>
     </div>
@@ -563,7 +522,7 @@ footer{
           </div>
         </div>
         <div class="plinks">
-          <a class="plink go" href="case-soc2-agent.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <a class="plink go" href="case-soc2-agent.html">Read the case study</a>
           <a class="plink" href="assets/soc2-architecture.html" target="_blank" rel="noopener">Explore the architecture <span class="ar" aria-hidden="true">&#8599;</span></a>
           <a class="plink" href="https://github.com/sameerbxba/soc2-gap-agent" target="_blank" rel="noopener">Code on GitHub <span class="ar" aria-hidden="true">&#8599;</span></a>
           <a class="plink" href="assets/SoC2_Agent_AI_Risk_Assessment.pdf" target="_blank" rel="noopener">Read the AI risk assessment <span class="ar" aria-hidden="true">&#8599;</span></a>
@@ -586,7 +545,7 @@ footer{
           </div>
         </div>
         <div class="plinks">
-          <a class="plink go" href="case-attestation.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <a class="plink go" href="case-attestation.html">Read the case study</a>
           <a class="plink" href="https://github.com/sameerbxba/portfolio-attestation" target="_blank" rel="noopener">Code on GitHub <span class="ar" aria-hidden="true">&#8599;</span></a>
         </div>
       </article>
@@ -599,12 +558,12 @@ footer{
           A tool that reads across a project's documents and flags where teams are working from different assumptions, the kind of mismatch that turns into rework three weeks later. I built it to test where generative AI fits into real work, and where it doesn't.
         </p>
         <div class="took">
-          <b>What it taught me:</b> the model was the easy part. The hard part was deciding which of a long list of flags mattered. That's a judgment call, not a technical one. I chose precision over recall, because a tool that flags everything gets ignored on day two.
+          <b>What it taught me:</b> the model was the easy part. The hard part was deciding which of a long list of flags mattered. That comes down to judgment. I chose precision over recall, because a tool that flags everything gets ignored on day two.
         </div>
         <p class="note">The live version is a front-end demo: projects are stored in your
         browser and the scanner shows pre-computed results, so it runs without an API key.</p>
         <div class="plinks">
-          <a class="plink go" href="case-syncbase.html">Read the case study <span class="ar" aria-hidden="true">&rarr;</span></a>
+          <a class="plink go" href="case-syncbase.html">Read the case study</a>
           <a class="plink" href="https://syncbase-eight.vercel.app/" target="_blank" rel="noopener">Live demo <span class="ar" aria-hidden="true">&#8599;</span></a>
           <a class="plink" href="https://github.com/sameerbxba/syncbase" target="_blank" rel="noopener">Code on GitHub <span class="ar" aria-hidden="true">&#8599;</span></a>
         </div>
@@ -616,7 +575,7 @@ footer{
           A NIST AI Risk Management Framework assessment of SyncBase, written the way I'd want one written about a system I had to sign off on. It separates the one feature that really uses AI from the rule-based one, and covers eight risks with named treatments, a model card, a monitoring plan and the thresholds at which I'd switch the scanner off.
         </p>
         <div class="took">
-          <b>The section I'd point to:</b> precision over recall, and what that choice costs, not just what it buys. Checking the assessment against my own code then turned up a control marked as implemented that didn't exist. I left the correction in the change log.
+          <b>The section I'd point to:</b> precision over recall, including what that choice costs. Checking the assessment against my own code then turned up a control marked as implemented that didn't exist. I left the correction in the change log.
         </div>
         <div class="plinks">
           <a class="plink go" href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">Read the assessment <span class="ar" aria-hidden="true">&#8599;</span></a>
@@ -873,7 +832,7 @@ footer{
     ticking = false;
     var y = window.scrollY || window.pageYOffset || 0;
     var p = limit > 0 ? y / limit : 0;
-    bar.style.transform = 'scaleX(' + (p < 0 ? 0 : p > 1 ? 1 : p) + ')';
+    if (bar) bar.style.transform = 'scaleX(' + (p < 0 ? 0 : p > 1 ? 1 : p) + ')';
   }
 
   function onScroll() {

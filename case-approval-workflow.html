@@ -21,10 +21,11 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102a43'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' fill='%23faf8f4'%3ESA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js')</script>
 <style>
 :root{
+  --card:#fdfbf7;
   --ink:#15181f;--slate:#586274;--mute:#646e7e;
   --navy:#1F4E79;--navy-deep:#102a43;--navy-soft:#2f6094;
   --paper:#faf8f4;--paper-2:#f3f0e9;--line:#e4dfd5;
@@ -35,39 +36,28 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:72px}
 body{
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   color:var(--ink);background:var(--paper);
   line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 a{color:inherit}
 h1,h2,h3{text-wrap:balance}
-:focus-visible{outline:2px solid var(--navy);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:2px solid var(--navy);outline-offset:3px;border-radius:3px}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
 
-#progress{position:fixed;top:0;left:0;height:2px;width:100%;
-  background:linear-gradient(90deg,var(--navy),var(--accent));z-index:60;
-  transform:scaleX(0);transform-origin:0 50%;will-change:transform}
-nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-bottom:1px solid transparent;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
-nav.stuck{border-bottom-color:var(--line);box-shadow:0 1px 18px rgba(16,42,67,.05)}
+nav{position:sticky;top:0;z-index:50;background:var(--paper);
+  border-bottom:1px solid transparent;}
+nav.stuck{border-bottom-color:var(--line);}
 .navrow{max-width:1080px;margin:0 auto;padding:12px 28px;
   display:flex;align-items:center;justify-content:space-between;gap:18px}
 .back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
   font-size:13.6px;font-weight:600;color:var(--slate);
-  padding:7px 12px;border-radius:8px;transition:all .25s var(--ease)}
+  padding:7px 12px;border-radius:3px;}
 .back:hover{color:var(--navy);background:var(--paper-2)}
-.back .ar{transition:transform .25s var(--ease)}
-.back:hover .ar{transform:translateX(-3px)}
 .navtag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
   font-weight:700;color:var(--accent-ink);white-space:nowrap}
 
-.js .rv{opacity:0;transform:translateY(14px);
-  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);
-  will-change:opacity,transform}
-.js .rv.in{opacity:1;transform:none}
-.rv.settled{will-change:auto}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .rv{opacity:1;transform:none;transition:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 header.head{padding:64px 0 40px;border-bottom:1px solid var(--line)}
 .eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
@@ -98,37 +88,35 @@ li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;
   border-radius:50%;border:1.7px solid var(--accent-soft)}
 li strong{color:var(--ink);font-weight:600}
 
-.callout{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
-  border-radius:0 12px 12px 0;padding:22px 24px;margin:24px 0}
+.callout{background:var(--card);border:1px solid var(--line);
+  border-radius:3px;padding:20px 22px;margin:24px 0}
 .callout b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--accent-ink);margin-bottom:9px;font-weight:700}
 .callout p:last-child{margin-bottom:0}
-.dark-note{background:var(--navy-deep);color:#dde6ef;border-radius:13px;padding:26px 28px;margin:26px 0}
+.dark-note{background:var(--navy-deep);color:#dde6ef;border-radius:3px;padding:26px 28px;margin:26px 0}
 .dark-note b.lab{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--accent-soft);margin-bottom:10px;font-weight:700}
 .dark-note p{color:#c2cfdc;margin-bottom:14px}
 .dark-note p:last-child{margin-bottom:0}
 .dark-note strong{color:#fff}
-pre{background:var(--navy-deep);color:#d7e2ee;border-radius:11px;padding:18px 20px;
-  overflow-x:auto;margin:20px 0;font-size:13px;line-height:1.72;
-  font-family:'SF Mono',Menlo,Consolas,monospace}
-pre .blk{color:#e6a578}
+pre{background:var(--paper-2);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:16px 18px;
+  overflow-x:auto;margin:20px 0;font-size:12.8px;line-height:1.7;
+  font-family:'IBM Plex Mono','SF Mono',Menlo,Consolas,monospace}
+pre .blk{color:var(--accent-ink);font-weight:600}
 figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:italic}
 
 .foot{padding:52px 0 64px;text-align:center;background:var(--paper-2);border-top:1px solid var(--line)}
 .foot p{max-width:56ch;margin:0 auto 22px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 21px;border-radius:9px;
-  text-decoration:none;font-size:14.5px;font-weight:600;
-  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease)}
-.btn-primary{background:var(--navy);color:#fff;box-shadow:0 5px 18px rgba(31,78,121,.24)}
-.btn-primary:hover{background:var(--navy-soft);transform:translateY(-2px)}
-.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
-.btn-ghost:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 21px;border-radius:3px;
+  text-decoration:none;font-size:14.5px;font-weight:600;}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-primary:hover{background:var(--navy-soft);}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:var(--card)}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);}
 .btnrow{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
-<div id="progress"></div>
 <nav id="nav">
   <div class="navrow">
     <a class="back" href="index.html#work"><span class="ar">&larr;</span> All work</a>
@@ -281,7 +269,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
     ticking=false;
     var y=window.scrollY||window.pageYOffset||0;
     var p=limit>0?y/limit:0;
-    bar.style.transform='scaleX('+(p<0?0:p>1?1:p)+')';
+    if (bar) bar.style.transform='scaleX('+(p<0?0:p>1?1:p)+')';
     nav.classList.toggle('stuck',y>12);
   }
   function onScroll(){ if(ticking) return; ticking=true; window.requestAnimationFrame(frame); }

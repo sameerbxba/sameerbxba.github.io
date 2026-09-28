@@ -140,7 +140,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
   <div class="wrap">
     <div class="eyebrow rv">Case study &nbsp;·&nbsp; IT governance</div>
     <h1 class="rv">An attestation cycle that refuses to count what it cannot prove</h1>
-    <p class="standfirst rv">Every application register is maintained by asking owners to confirm it once a quarter. I wrote that cycle as code, made each of its quiet failures visible, and then found out the first version was quietly failing in a way of its own.</p>
+    <p class="standfirst rv">Every application register is maintained by asking owners to confirm it once a quarter. I wrote that cycle as code, made each of the ways it fails show up, and then found out my first version was failing in a way of its own.</p>
     <div class="meta rv">
       <div><b>Context</b><span>Self-directed</span></div>
       <div><b>My role</b><span>Design, build, review</span></div>
@@ -162,15 +162,14 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
       by emailing every owner once a quarter and asking them to confirm their record.
     </p>
     <p>
-      Nobody refuses. What happens instead is quieter. Some owners have left. Some
+      Nobody refuses. What happens instead is harder to see. Some owners have left. Some
       replies say "looks fine" without confirming anything. Some records change the week
       after they were confirmed. And at the end, somebody reports the response rate,
-      because it is the number that is easy to get, and the register acquires a column
+      because it's the number that's easy to get, and the register acquires a column
       of green ticks that nobody can explain.
     </p>
     <p>
-      I wanted to build the cycle so that each of those failures had to show up
-      somewhere, rather than being absorbed. The SOC 2 agent I had built earlier turned on
+      I wanted to build the cycle so that each of those failures had to show up somewhere instead of getting absorbed. The SOC 2 agent I'd built earlier turned on
       one question, what should a system be <strong>stopped</strong> from doing. This
       project asks the same question of a much more ordinary piece of work, and the
       answer turned out to be most of the design.
@@ -183,22 +182,20 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
     <p>
       The cycle opens, sends a request to every in-scope application's owner, classifies
-      each reply as a decision or as a reason it was not one, escalates what is overdue,
-      expires what is never answered, and refuses to close while anything is unresolved.
-      Time is a parameter rather than a clock, which is what makes the deadline logic
-      testable at all.
+      each reply as a decision or as a reason it wasn't one, escalates what's overdue,
+      expires what's never answered, and refuses to close while anything is unresolved.
+      Time is passed in as a parameter instead of read from a clock, which is what makes the deadline logic testable.
     </p>
     <p>
-      The interesting part is not that it sends the emails. It is what it refuses to
-      count:
+      Sending the emails is the easy bit. What matters is what it refuses to count:
     </p>
     <ul>
-      <li><strong>An application with no active, known owner</strong> is recorded as an exception against the population. It never quietly leaves the denominator.</li>
-      <li><strong>A reply that is not an explicit decision</strong> is not an attestation. Prose, an out of office, a bounce and a reply with two answers are each recorded with their own reason, and the request stays open.</li>
+      <li><strong>An application with no active, known owner</strong> is recorded as an exception against the population. It never just drops out of the denominator.</li>
+      <li><strong>A reply that isn't an explicit decision</strong> isn't an attestation. Prose, an out of office, a bounce and a reply with two answers are each recorded with their own reason, and the request stays open.</li>
       <li><strong>Every attestation is bound to the exact version of the record the owner saw.</strong> The request embeds a digest of the attestable fields, the reply carries it back, and if the record is amended afterwards the attestation stops counting without anybody having to notice.</li>
       <li><strong>A reply from anyone other than the owner of record</strong> is refused before it can reach the record at all, however helpful the colleague was being.</li>
       <li><strong>Silence escalates once and then expires as "not attested".</strong> Elapsed time can make a request louder and then final. It can never turn it into an answer.</li>
-      <li><strong>Coverage is measured against everything in scope</strong>, and it is printed next to the response rate every time, because the gap between them is the finding.</li>
+      <li><strong>Coverage is measured against everything in scope</strong>, and it's printed next to the response rate every time, because the gap between them is the finding.</li>
     </ul>
     <p>
       The recorded quarter that ships with the repository returns a 90 percent response
@@ -214,7 +211,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
     <p>
       The request asks the owner to reply with exactly one of three words on a line of
       its own. The system looks for that word and nothing else. "Yes, that all looks
-      right to me" is not recorded as an attestation, and the owner gets a clarification
+      right to me" isn't recorded as an attestation, and the owner gets a clarification
       telling them so.
     </p>
     <p>
@@ -222,29 +219,25 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
       alternative is a parser that infers intent from a sentence, and a parser can be
       wrong without announcing it. The green tick it produces is indistinguishable from a
       real one, and somebody will later be asked how it got there. Annoying the owner is
-      the cheaper failure, because it is visible and it is theirs to fix.
+      the cheaper failure, because it's visible and it's theirs to fix.
     </p>
     <div class="callout">
       <b class="lab">The principle</b>
       <p>
-        When a control has to trade one failure for another, choose the failure that is
-        visible over the one that is not, and write down what the choice costs. A cost
-        that is stated can be argued with. A cost that is hidden is just a defect nobody
-        has found yet.
+        If a control has to trade one failure for another, pick the one people can see, and write down what that costs. People can argue with a cost that's written down. A hidden one is just a defect nobody has found yet.
       </p>
     </div>
     <p>
       The same instinct produced the digest. An attestation is a statement about a
       specific version of a record, and without something that identifies that version,
-      the attestation silently transfers to whatever the record says later. The digest
-      is twelve characters in an email, and it is the reason a quiet edit two days after
-      the owner confirmed shows up in the report instead of disappearing into it.
+      the attestation just carries over to whatever the record says later. The digest
+      is twelve characters in an email, and it's the reason an edit made two days after the owner confirmed shows up in the report instead of disappearing into it.
     </p>
 
   </section>
   <section class="s rv">
     <span class="snum">04 &nbsp;/&nbsp; What I got wrong</span>
-    <h2>The headline claim was false, by a route I had not tried</h2>
+    <h2>The headline claim was false, by a route I hadn't tried</h2>
 
     <p>
       Every sentence in the repository said that silence could never become an
@@ -256,9 +249,10 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
     <div class="dark-note">
       <b class="lab">How it was found</b>
       <p>
-        Not by reading. I had the first version reviewed adversarially: every control
-        deleted in turn and the test suite re-run, every claim in the documentation
-        checked against the code. The late reply was the first finding. The second was
+        Not by reading. I built the project with an AI coding assistant, so I didn't
+        trust it to have checked itself. I ran an AI-assisted adversarial review against
+        the first version: every control deleted in turn and the test suite re-run
+        (mutation testing), and every claim in the documentation checked against the code. The late reply was the first finding. The second was
         that <strong>five of the controls were defended by tests that still passed with
         the control removed</strong>. The documentation described a system one revision
         ahead of the one in the repository.
@@ -276,8 +270,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
       against.
     </p>
     <p>
-      All of it is written into the control matrix under its own heading, because a
-      governance document that was never wrong usually means nobody checked. The tests
+      All of it's written into the control matrix under its own heading, so the next person reading it can see what broke and how it was fixed. The tests
       that now defend each of those controls live in one file, and each is named for the
       failure it was written for.
     </p>
@@ -310,32 +303,31 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
   response rate    90.0%   (9 replies to 10 requests)
   COVERAGE         23.1%   (3 valid attestations across 13 in scope)</pre>
-    <figcaption>Verbatim from <code>python -m attest.cli run</code>, with the successful attestations cut for length. Every line quoted here is asserted by a test against a golden transcript, so the page cannot drift from the program.</figcaption>
+    <figcaption>Verbatim from <code>python -m attest.cli run</code>, with the successful attestations cut for length. Every line quoted here is asserted by a test against a golden transcript, so the page can't drift from the program.</figcaption>
     <p>
       Read the numerator of that first figure and it gets worse. Three of the nine
       replies are a bounce from a mail daemon, an autoresponder, and a colleague
       answering for an owner on leave. Six are messages an owner actually wrote, and they
       come from three people. The denominator excludes the three applications the cycle
-      could not ask about at all. Every one of those errors pushes the number up, which
+      couldn't ask about at all. Every one of those errors pushes the number up, which
       is how a metric like this survives: nobody checks what it counts, because its
       name already tells them.
     </p>
 
   </section>
   <section class="s rv">
-    <span class="snum">06 &nbsp;/&nbsp; What I would do differently</span>
-    <h2>Where the controls do not reach</h2>
+    <span class="snum">06 &nbsp;/&nbsp; What I'd do differently</span>
+    <h2>Where the controls don't reach</h2>
 
     <p>
-      Stated here rather than left to the README, because the point of the project is
-      not to overclaim.
+      I'm putting these here instead of burying them in the README, because the project is about not overclaiming.
     </p>
     <ul>
-      <li><strong>Nothing detects an omission.</strong> An application nobody ever entered is outside the population, so it cannot be unresolved, cannot be an exception, and does not reduce coverage. Every figure the system prints is conditional on the register being complete, and nothing tests that. It is the largest residual risk and the evidence of the failure is by definition absent.</li>
-      <li><strong>The digest proves the version, not the truth of it.</strong> An owner can confirm a record that is wrong in every field, and every control will pass. The claim is narrow: what they agreed to can be identified exactly.</li>
-      <li><strong>It has never run against a real register</strong>, and it does not send email. The outbound side is a port with a recorded implementation, which is the tradeoff that makes the controls testable and the one thing the project asks you to take on trust.</li>
-      <li><strong>Nothing is authenticated.</strong> Sender identity is a string compared against the owner's address. That is a control against a colleague being helpful, not against anyone who wants to forge a reply.</li>
-      <li><strong>Escalation stops at one tier</strong>, with no route to a documented risk acceptance, so a cycle can close with a tier 1 application unattested and nobody obliged to decide anything about it. The report makes that visible. It does not make it anyone's problem.</li>
+      <li><strong>Nothing detects an omission.</strong> An application nobody ever entered is outside the population, so it can't be unresolved, can't be an exception, and doesn't reduce coverage. Every figure the system prints is conditional on the register being complete, and nothing tests that. It's the largest residual risk and the evidence of the failure is by definition absent.</li>
+      <li><strong>The digest proves the version, not the truth of it.</strong> An owner can confirm a record that's wrong in every field, and every control will pass. The claim is narrow: what they agreed to can be identified exactly.</li>
+      <li><strong>It has never run against a real register</strong>, and it doesn't send email. The outbound side is a port with a recorded implementation, which is the tradeoff that makes the controls testable and the one thing the project asks you to take on trust.</li>
+      <li><strong>Nothing is authenticated.</strong> Sender identity is a string compared against the owner's address. That's a control against a colleague being helpful, not against anyone who wants to forge a reply.</li>
+      <li><strong>Escalation stops at one tier</strong>, with no route to a documented risk acceptance, so a cycle can close with a tier 1 application unattested and nobody obliged to decide anything about it. The report makes that visible. It doesn't make it anyone's problem.</li>
     </ul>
 
   </section>

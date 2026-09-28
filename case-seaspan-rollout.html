@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Case study: SyncBase, and auditing my own tool | Sameer Athili</title>
-<meta name="description" content="Building SyncBase, writing a NIST AI RMF assessment of it, and finding a control I had documented as implemented that did not exist.">
+<title>Case study: a Salesforce Service Cloud rollout across seven departments | Sameer Athili</title>
+<meta name="description" content="How I ran discovery across seven departments, turned it into the requirements for a Salesforce Service Cloud rollout, and made sure the people using it could actually work in it after go-live.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SyncBase, and what happened when I audited my own tool">
-<meta property="og:description" content="Building SyncBase, writing a NIST AI RMF assessment of it, and finding a control I had documented as implemented that did not exist.">
-<meta property="og:url" content="https://sameerbxba.github.io/case-syncbase.html">
-<meta property="og:image" content="https://sameerbxba.github.io/assets/og-syncbase.png">
+<meta property="og:title" content="A Salesforce Service Cloud rollout, from discovery to go-live">
+<meta property="og:description" content="How I ran discovery across seven departments, turned it into the requirements for a Salesforce Service Cloud rollout, and made sure the people using it could actually work in it after go-live.">
+<meta property="og:url" content="https://sameerbxba.github.io/case-seaspan-rollout.html">
+<meta property="og:image" content="https://sameerbxba.github.io/assets/og-seaspan.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:site_name" content="Sameer Athili">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SyncBase, and what happened when I audited my own tool">
-<meta name="twitter:description" content="Building SyncBase, writing a NIST AI RMF assessment of it, and finding a control I had documented as implemented that did not exist.">
-<meta name="twitter:image" content="https://sameerbxba.github.io/assets/og-syncbase.png">
+<meta name="twitter:title" content="A Salesforce Service Cloud rollout, from discovery to go-live">
+<meta name="twitter:description" content="How I ran discovery across seven departments, turned it into the requirements for a Salesforce Service Cloud rollout, and made sure the people using it could actually work in it after go-live.">
+<meta name="twitter:image" content="https://sameerbxba.github.io/assets/og-seaspan.png">
 <meta name="theme-color" content="#faf8f4">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102a43'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='30' fill='%23faf8f4'%3ESA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,14 +138,14 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
 <header class="head">
   <div class="wrap">
-    <div class="eyebrow rv">Case study &nbsp;·&nbsp; AI governance</div>
-    <h1 class="rv">SyncBase, and what happened when I audited my own tool</h1>
-    <p class="standfirst rv">I built a tool to find where teams are working from contradicting assumptions, then wrote a NIST AI RMF assessment of it. Checking the document against my own source code is where it got interesting.</p>
+    <div class="eyebrow rv">Case study &nbsp;·&nbsp; Delivery &amp; enablement</div>
+    <h1 class="rv">Seven departments, one warranty process, and a launch people could use</h1>
+    <p class="standfirst rv">Warranty cases moved through seven departments that could each see only their own step. The job was to get all of them onto one Salesforce Service Cloud process, and then make sure going live wasn't where the work stopped.</p>
     <div class="meta rv">
-      <div><b>Context</b><span>Self-directed</span></div>
-      <div><b>My role</b><span>Design, build, assessment</span></div>
-      <div><b>When</b><span>2026</span></div>
-      <div><b>Built with</b><span>React, Anthropic API, Vercel</span></div>
+      <div><b>Context</b><span>Seaspan ULC, North Vancouver</span></div>
+      <div><b>My role</b><span>Digital solutions &amp; PM co-op, in the PMO</span></div>
+      <div><b>When</b><span>Jan &ndash; Apr 2025</span></div>
+      <div><b>Worked with</b><span>Salesforce Service Cloud, BPMN, Smartsheet, Tempus</span></div>
     </div>
   </div>
 </header>
@@ -153,111 +153,120 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 <main class="wrap">
 <section class="s rv">
   <span class="snum">01 &nbsp;/&nbsp; The situation</span>
-  <h2>Building something in order to have something to govern</h2>
+  <h2>A process nobody could see from end to end</h2>
 
 <p>
-  SyncBase started as a way to test my own thinking about where generative AI really fits into day-to-day work. It reads across a project's documents and flags
-  where teams are working from contradicting assumptions, the kind of mismatch that turns into rework three weeks later.
+  A warranty case at a shipyard doesn't belong to one team. It gets logged, assessed,
+  approved, sometimes escalated, and closed, and each of those steps sat with a
+  different department. Seven of them, each with its own intake process and its own
+  idea of what the case was.
 </p>
 <p>
-  The second half of the project turned out to matter more than the first. Once it
-  existed, I wrote a full NIST AI Risk Management Framework assessment of it, which
-  meant assessing my own system with nobody to hide behind. That's a different
-  exercise from writing about somebody else's.
+  Nobody was doing their step badly. The problem was that nobody could see the whole
+  flow, so a case could stall between two teams and neither would know it was theirs.
+  Seaspan was moving warranty case management onto Salesforce Service Cloud, and I
+  joined the PMO for the term that took it from discovery to go-live.
 </p>
 
 </section>
 <section class="s rv">
-  <span class="snum">02 &nbsp;/&nbsp; The governance decision</span>
-  <h2>Precision over recall, and stating what it costs</h2>
+  <span class="snum">02 &nbsp;/&nbsp; What I did</span>
+  <h2>Discovery first, then requirements the build could run on</h2>
 
 <p>
-  The model was the easy part. The hard part was deciding which of a long list of flags were the few worth showing.
+  The build itself was the development team's work. Mine was everything around it
+  that decides whether a build lands:
+</p>
+<ul>
+  <li><strong>Discovery across all seven departments.</strong> I sat with each one to learn how a case really moved through their step, which wasn't always how it was documented.</li>
+  <li><strong>One end-to-end map.</strong> I mapped case, warranty, approval and escalation in BPMN, so each team could see the steps on either side of their own for the first time.</li>
+  <li><strong>Requirements from the map.</strong> I split that flow into the requirements the build ran on, across five two-week sprints.</li>
+  <li><strong>Running the cadence.</strong> I ran the sprint ceremonies and made sure every open blocker had a named owner and a next step before the next meeting, so nothing sat around in between.</li>
+  <li><strong>Testing and release readiness,</strong> coordinated through to a launch with zero critical defects.</li>
+</ul>
+
+</section>
+<section class="s rv">
+  <span class="snum">03 &nbsp;/&nbsp; The decision that mattered</span>
+  <h2>Asking what decision each request was for</h2>
+
+<p>
+  The rollout wasn't the only thing on my plate. The same term I was keeping
+  Smartsheet project plans current for leadership, building Tempus reporting for
+  resource managers, and answering ad hoc asks from executives trying to make quick
+  calls. Four audiences, and every one of them asked for something slightly different
+  from what they needed.
 </p>
 <p>
-  I set the system to surface deliberately fewer conflicts than it could. A tool that
-  flags everything gets ignored on day two, and an ignored tool has a worse risk
-  profile than no tool, because people believe it's watching.
+  The habit that made it manageable was stepping back on every request to ask what
+  business decision it was meant to support. A resource manager asking for a report
+  usually needed an answer to one question about next month. An executive asking for
+  status usually needed to know whether to step in.
 </p>
 <div class="callout">
-  <b class="lab">Why this was a governance decision and not just tuning</b>
+  <b class="lab">The principle</b>
   <p>
-    Choosing precision over recall means accepting that the system will miss real
-    conflicts. The assessment says so in those words, and says what the choice costs, not just what it buys. A risk document that only records the
-    upside of a decision is a marketing document with a table in it.
+    An update nobody can act on is noise. I tried to turn every vague ask into a
+    one-line takeaway with an owner and a next step, because that's something a person can make a decision from.
   </p>
 </div>
+
+</section>
+<section class="s rv">
+  <span class="snum">04 &nbsp;/&nbsp; After go-live</span>
+  <h2>Going live wasn't the finish line</h2>
+
 <p>
-  The other decision I'd defend: the assessment separates the one feature that really uses a model from the rule-based one. Governing string concatenation as though it were a
-  model is how these documents lose credibility with anyone who reads them properly.
+  If people work around a new system after launch, it hasn't really launched.
+  So the last part of the term went on the people using it: I wrote the end-user
+  training and job aids for the new process, so that someone who only knew their own
+  step could work in the new one without having to ask.
+</p>
+<p>
+  I also built the resource and capacity reporting that managers used directly for
+  planning decisions. I hadn't used Smartsheet or Tempus before that term, so the
+  first stretch was learning what the people reading those reports used them to decide, and building backwards from that.
+</p>
+<p>
+  The defect count was fine, but the result I'd point to is that teams who only knew
+  their own step started working from one shared picture, and when my lead was away
+  the cadence, the backlog and the decision log all kept running without escalation.
 </p>
 
 </section>
 <section class="s rv">
-  <span class="snum">03 &nbsp;/&nbsp; What I got wrong</span>
-  <h2>Three things, and I only found them by checking</h2>
+  <span class="snum">05 &nbsp;/&nbsp; What I got wrong</span>
+  <h2>I held the map back until it felt finished</h2>
 
-<h3>A control I'd documented as implemented didn't exist</h3>
 <p>
-  I verified the assessment against my own source code instead of my memory of what I'd built, and found a control marked as implemented that I'd never
-  written. The document and the system had diverged, and the document was the
-  confident one.
+  The end-to-end map was the most useful thing I produced that term, and I sat on it
+  for longer than I should have. I wanted it complete before anyone saw it, so I kept
+  refining the flow on my own instead of putting a rough version in front of the seven
+  departments early.
 </p>
-<h3>The scanner doesn't work on the deployed site</h3>
 <p>
-  The model call is made from the browser, which works locally and fails once the
-  application is deployed, because the credential can't be shipped to the client.
-  The live site therefore returns pre-computed results for the sample projects and an
-  error for anything a user creates. For a while the assessment didn't say so.
-</p>
-<h3>The document contained a quotation I couldn't source</h3>
-<p>
-  A quote and an attribution went into an early draft that I couldn't stand behind
-  on a second read. Both were removed.
+  When they did see it, the corrections came quickly: a handoff drawn in the wrong
+  place, an approval step one team had never mentioned because to them it was
+  obvious. None of it was hard to fix. All of it would have surfaced sooner with a
+  rougher draft, and the requirements that depended on it would have started from a
+  truer picture.
 </p>
 <div class="dark-note">
-  <b class="lab">What I changed as a result</b>
+  <b class="lab">What I do differently now</b>
   <p>
-    The assessment now carries a <strong>deployment limitation</strong> section that
-    names the hosting problem directly, a <strong>verification</strong> section
-    stating what was checked against the code and what wasn't, and a
-    <strong>change log</strong> recording every correction including the removed
-    quote.
-  </p>
-  <p>
-    A governance document that was never wrong usually means nobody checked. The
-    change log is the part of that document I'd point to first.
+    I share the <strong>first rough version</strong> early now. A map is really a question for the people who do the work, and the fastest way to get it right is to let them mark it up while it's still cheap to change.
   </p>
 </div>
 
 </section>
 <section class="s rv">
-  <span class="snum">04 &nbsp;/&nbsp; What changed as a result</span>
-  <h2>The habit, more than the document</h2>
-
-<p>
-  The concrete outputs were a corrected assessment, a set of fixes to the tool, and a
-  disclosure on the live site about what does and doesn't work.
-</p>
-<p>
-  What stuck was a habit: <strong>verify the document against the
-  running system, not against your memory of building it.</strong> That's what I
-  carried into the next project, and it's what caught a much more serious defect there, where a control was recording human decisions that no human had made.
-</p>
-<p>
-  It also changed how I read other people's documents. The first thing I now look for
-  is whether anything in them has ever been corrected.
-</p>
-
-</section>
-<section class="s rv">
-  <span class="snum">05 &nbsp;/&nbsp; What's still open</span>
-  <h2>Better said here than found by someone else</h2>
+  <span class="snum">06 &nbsp;/&nbsp; What I took from it</span>
+  <h2>A rollout lands when people use it</h2>
 
 <ul>
-  <li><strong>The scanner still isn't live.</strong> The fix is to move the model call behind a serverless function so the credential stays on the server. It's disclosed, not solved.</li>
-  <li><strong>Accuracy has never been measured.</strong> No claim about how often the tool is right appears anywhere, because nothing has been measured, and I'd rather have a gap than a number I can't support.</li>
-  <li><strong>The assessment is a self-assessment.</strong> Nobody independent has reviewed either the tool or the document, and the document says so. It's a management assertion, not an audit, and calling it anything else would be exactly the kind of overstatement it exists to avoid.</li>
+  <li><strong>Discovery is what makes requirements true.</strong> The documented process and the real one were never quite the same, and the requirements were only as good as the time spent watching.</li>
+  <li><strong>Every blocker needs a name next to it.</strong> Most delays on the project weren't hard problems, just ones nobody had been asked to own.</li>
+  <li><strong>Enablement is part of delivery.</strong> Training and job aids decide whether people use the new process or go back to the old one.</li>
 </ul>
 
 </section>
@@ -266,11 +275,10 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
 <div class="foot">
   <div class="wrap">
-    <p>The assessment covers intended use, out-of-scope uses, risk tolerances, a model card, monitoring thresholds and decommission criteria, and carries a change log of everything I corrected.</p>
+    <p>This was a co-op term in Seaspan's PMO. The same term included the Smartsheet and Tempus reporting described above.</p>
     <div class="btnrow">
-      <a class="btn btn-primary" href="assets/SyncBase_NIST_AI_RMF_Assessment.pdf" target="_blank" rel="noopener">Read the assessment</a>
-      <a class="btn btn-ghost" href="https://syncbase-eight.vercel.app/" target="_blank" rel="noopener">Live site</a>
-      <a class="btn btn-ghost" href="index.html#work">All work</a>
+      <a class="btn btn-primary" href="index.html#work">All work</a>
+      <a class="btn btn-ghost" href="index.html#contact">Get in touch</a>
     </div>
   </div>
 </div>

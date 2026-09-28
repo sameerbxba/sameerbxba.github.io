@@ -1,7 +1,7 @@
 # sameerbxba.github.io
 
 The source for [sameerbxba.github.io](https://sameerbxba.github.io), a
-personal site covering technology risk, AI governance and delivery work.
+personal site covering program delivery, analytics and technology risk.
 
 ## What is here
 
@@ -11,6 +11,8 @@ personal site covering technology risk, AI governance and delivery work.
 | `case-soc2-agent.html` | Case study: an AI agent that reviews SOC 2 reports and cannot act without permission |
 | `case-syncbase.html` | Case study: SyncBase, and what happened when I audited my own tool |
 | `case-approval-workflow.html` | Case study: an approval workflow redesign at Equitable Life |
+| `case-seaspan-rollout.html` | Case study: a Salesforce Service Cloud rollout across seven departments at Seaspan |
+| `case-attestation.html` | Case study: a quarterly attestation cycle that refuses to count what it cannot prove |
 | `assets/` | The two governance documents the case studies cite, as PDFs |
 
 ## How it is built

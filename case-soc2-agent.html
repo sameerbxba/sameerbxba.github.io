@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Case study: a SOC 2 review agent that cannot act without permission — Sameer Athili</title>
+<title>Case study: a SOC 2 review agent that cannot act without permission | Sameer Athili</title>
 <meta name="description" content="How I built an AI agent that reviews SOC 2 reports, the controls I put around it, and the control that turned out to be recording decisions nobody made.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="An AI agent that reviews SOC 2 reports, and cannot act without permission">
@@ -140,7 +140,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
   <div class="wrap">
     <div class="eyebrow rv">Case study &nbsp;·&nbsp; AI governance</div>
     <h1 class="rv">An agent that reviews SOC 2 reports, and the control that lied about me</h1>
-    <p class="standfirst rv">I built an AI agent that can write to a register, then spent longer governing it than building it. The most useful thing I found was a control that was quietly manufacturing the evidence it existed to provide.</p>
+    <p class="standfirst rv">I built an AI agent that can write to a register, then spent longer governing it than building it. The most useful thing I found was a control that was faking the evidence it was supposed to provide.</p>
     <div class="meta rv">
       <div><b>Context</b><span>Self-directed</span></div>
       <div><b>My role</b><span>Design, build, assessment</span></div>
@@ -156,10 +156,9 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
   <h2>Governing a system that can act, not just answer</h2>
 
 <p>
-  Everything I had written about AI governance to that point was about a model
+  Everything I'd written about AI governance to that point was about a model
   that produces an answer. A model can be wrong, and being wrong produces a bad
-  sentence. I wanted to know what changes when the system can do something, and
-  the honest way to find out was to build one and then try to govern it.
+  sentence. I wanted to know what changes when the system can do something, and the only way I could think of to find out was to build one and try to govern it.
 </p>
 <p>
   So I picked a task from the world I want to work in. The agent reads a vendor's
@@ -172,9 +171,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 <p>
   I deliberately chose a task where the system <strong>writes</strong>. A read-only
   summariser would have been easier to build and far less interesting to govern.
-  The moment a system can change state, the governance question stops being accuracy
-  and becomes authority, and authority is the thing the existing frameworks have the
-  least to say about.
+  Once a system can change something, the question shifts from whether it's accurate to what it's allowed to do, and that's the part the existing frameworks say the least about.
 </p>
 
 </section>
@@ -190,20 +187,19 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 </p>
 <p>
   Four of the six functions read. One writes. One ends the run. Everything the system
-  can do to the world outside itself goes through that single write, which is what
-  made the authority question tractable at all.
+  can do to the world outside itself goes through that single write, which made the authority question manageable.
 </p>
 <p>
   The six controls all live in the same place, which is the gap between the model
   asking and the program doing:
 </p>
 <ul>
-  <li><strong>A declared tool allowlist</strong>, because an agent's real capability is whatever its tools can reach, not whatever its prompt claims it does.</li>
+  <li><strong>A declared tool allowlist</strong>, because what an agent can really do is whatever its tools can reach, whatever the prompt says.</li>
   <li><strong>Action tiers</strong>, so reads execute and writes stop and ask a person.</li>
   <li><strong>A run budget</strong> on iterations, tokens and wall-clock time.</li>
   <li><strong>An append-only audit log</strong> of every call, argument, control decision and approval, written before the result goes back to the model.</li>
   <li><strong>A citation check</strong> that refuses a finding unless the quoted evidence appears verbatim in the source and the section was read in that run.</li>
-  <li><strong>Rollback</strong> of everything a run wrote, which deliberately does not touch the log.</li>
+  <li><strong>Rollback</strong> of everything a run wrote, which deliberately doesn't touch the log.</li>
 </ul>
 
 </section>
@@ -213,25 +209,19 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
 <p>
   The easy design is a single prompt at the start: approve this run, then let it go.
-  It is less annoying, it demos better, and it is what most tools do.
+  It's less annoying, it demos better, and it's what most tools do.
 </p>
 <p>
-  I made approval happen per write instead, so ten findings means ten prompts. The
-  reason is that the audit log is the whole point. A single up-front approval means
-  the log records a human decision about a run rather than about any particular
-  finding, and nobody actually decided anything about finding seven. Ten prompts is
-  the cost of the log being true.
+  I made approval happen per write instead, so ten findings means ten prompts. The audit log is the reason. With one approval up front, the log records a decision about the run, not about any single finding, and nobody ever decided anything about finding seven. Ten prompts is what it costs for the log to be true.
 </p>
 <div class="callout">
   <b class="lab">The principle</b>
   <p>
-    A control that produces a record should only record decisions that were actually
-    made. If the record is more confident than the human was, the control has made
-    things worse rather than better, because everyone downstream trusts the record.
+    A control that keeps a record should only record decisions someone really made. If the record is more confident than the person was, the control has made things worse, because everyone downstream trusts the record.
   </p>
 </div>
 <p>
-  The second decision in the same spirit: rollback reverses what the agent wrote and
+  The second decision came from the same place: rollback reverses what the agent wrote and
   leaves the audit log alone. Undoing an action and erasing the evidence that it
   happened are different operations, and only one of them should be available to the
   person running the tool.
@@ -243,40 +233,34 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
   <h2>A control that manufactured the evidence it existed to provide</h2>
 
 <p>
-  The first version of the approval prompt treated any input that was not
-  <code>y</code> as a decline. That is the obvious way to write it and it looks
+  The first version of the approval prompt treated any input that wasn't
+  <code>y</code> as a decline. That's the obvious way to write it and it looks
   safe, because the default is refusal.
 </p>
 <p>
   While the agent was sitting at a prompt waiting for an answer, I pasted my next
-  command into the terminal. The prompt consumed the whole line as my answer. It was
-  not <code>y</code>, so the system recorded <strong>declined by operator</strong> in
+  command into the terminal. The prompt consumed the whole line as my answer. It wasn't <code>y</code>, so the system recorded <strong>declined by operator</strong> in
   the audit log against requirement R-02, and moved on.
 </p>
 <div class="dark-note">
   <b class="lab">Why this was worse than it looked</b>
   <p>
     The visible effect was a missing finding, which is trivial and self-correcting.
-    The real effect was that the audit log now asserted a human decision that no
-    human had made.
+    The bigger problem was that the audit log now showed a human decision that no human had made.
   </p>
   <p>
-    That control exists so the log can be relied on as evidence of oversight. A
-    failure mode where it silently <strong>manufactures</strong> that evidence is
-    worse than the control being absent, because an absent control is visible and a
-    false record is not.
+    That control exists so the log can be relied on as evidence of oversight. If it can <strong>fake</strong> that evidence, it's worse than having no control at all. A missing control is easy to spot. A false record isn't.
   </p>
 </div>
 <p>
-  I had reviewed that function and written a test for it. Neither the review nor the
-  test asked what the control does with input that is neither approval nor refusal,
-  because I was thinking about the two answers rather than about everything else a
-  terminal can receive. It was found by running the thing, not by reading it.
+  I'd reviewed that function and written a test for it. Neither the review nor the
+  test asked what the control does with input that's neither approval nor refusal,
+  because I was thinking about the two answers and not about everything else a terminal can receive. I only found it by running the thing.
 </p>
 <p>The fix, now documented as control AC-2b:</p>
 <ul>
-  <li>Only an explicit <strong>y</strong> or <strong>n</strong> counts. Anything else is not an answer, and the prompt repeats.</li>
-  <li>An absent operator, which is what happens when piped input runs out, is recorded as <strong>no operator input available</strong> rather than as a refusal somebody chose. Those are different facts and the log should not conflate them.</li>
+  <li>Only an explicit <strong>y</strong> or <strong>n</strong> counts. Anything else isn't an answer, and the prompt repeats.</li>
+  <li>An absent operator, which is what happens when piped input runs out, is recorded as <strong>no operator input available</strong> rather than as a refusal somebody chose. Those are different facts, and the log should keep them apart.</li>
   <li>Three tests now cover it, including the pasted-command case specifically.</li>
 </ul>
 
@@ -288,7 +272,7 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 <p>
   The repository ships a deliberately tampered session where the model invents a
   citation, then quotes something real from a section it never read, then reaches for
-  a function that does not exist. Each is stopped by a different control:
+  a function that doesn't exist. Each is stopped by a different control:
 </p>
 <pre>  read     3-8-security-testing
 <span class="blk">  blocked</span>  record_finding: AC-5: the quoted citation does not appear in the source document.
@@ -297,36 +281,31 @@ figcaption{font-size:13.4px;color:var(--mute);margin:-10px 0 22px;font-style:ita
 
   gap register  (0 findings)
   complete:  False</pre>
-<figcaption>Nothing reaches the register. Each refusal returns to the model as a tool error rather than a crash, so it can try a permitted route instead.</figcaption>
+<figcaption>Nothing reaches the register. Each refusal goes back to the model as a tool error instead of a crash, so it can try a permitted route instead.</figcaption>
 <p>
   Twenty-four tests pass, each one corresponding to a claim the assessment makes, so
-  the document cannot drift away from the system without something going red. That
-  was the specific failure I was designing against, because it is the one I had
-  already made once on my own work.
+  the document can't drift away from the system without something going red. That's the exact failure I was trying to prevent, because I'd already made it once on my own work.
 </p>
 
 </section>
 <section class="s rv">
-  <span class="snum">06 &nbsp;/&nbsp; What I would do differently</span>
+  <span class="snum">06 &nbsp;/&nbsp; What I'd do differently</span>
   <h2>Three of these are in the assessment as open risks</h2>
 
 <p>
-  The assessment names two risks as high and unmitigated, and I would rather state
-  them here than let the case study read better than the system is.
+  The assessment names two risks as high and unmitigated, and I'd rather say so here than have the case study sound better than the system is.
 </p>
 <ul>
-  <li><strong>Nothing detects an omission.</strong> Every control operates on something the agent did. If it never searches for the right section, no control fires, because nothing was attempted. That is the largest residual risk in the system and the hardest to design around.</li>
-  <li><strong>Confidentiality is unresolved.</strong> A real SOC 2 report belongs to the vendor, and sending passages of it to a third-party model provider is a decision for the receiving organisation, not for whoever runs the tool. Until that is settled the system cannot touch a real report, which is why the assessment says so rather than leaving it implied.</li>
+  <li><strong>Nothing detects an omission.</strong> Every control operates on something the agent did. If it never searches for the right section, no control fires, because nothing was attempted. That's the largest residual risk in the system and the hardest to design around.</li>
+  <li><strong>Confidentiality is unresolved.</strong> A real SOC 2 report belongs to the vendor, and sending passages of it to a third-party model provider is a decision for the receiving organisation, not for whoever runs the tool. Until that's settled the system can't touch a real report, which is why the assessment says so outright.</li>
   <li><strong>Approval should capture a person and a reason</strong>, not a keypress. The control currently proves that somebody pressed a key, which is a weaker claim than it appears.</li>
-  <li><strong>The tool schemas should be generated from the code</strong> rather than compared to it in a test, so they cannot diverge between test runs.</li>
+  <li><strong>The tool schemas should be generated from the code</strong> instead of compared to it in a test, so they can't diverge between test runs.</li>
 </ul>
 <p>
-  The wider point, and the reason the assessment has a section the framework does not
-  ask for: NIST AI RMF was written for systems that produce outputs. Applied
+  The bigger point, and why the assessment has a section the framework doesn't ask for: NIST AI RMF was written for systems that produce outputs. Applied
   faithfully to an agent and stopped there, it will be silent on tool authority, on
   reversibility, on an audit trail of actions rather than outputs, and on human
-  oversight as a control that can itself fail. The fourth one is not theoretical. It
-  is section 7 of my own document, and it happened to me.
+  oversight as a control that can itself fail. The fourth one isn't hypothetical. It's section 7 of my own document, and it happened to me.
 </p>
 
 </section>
